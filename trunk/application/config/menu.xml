@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<menu>
+	<item>
+		<label>Principal</label>
+		<link>/principal</link>
+	</item>
+	<item>
+		<label>Gerenciar</label>
+		<submenu>
+			<item>
+				<label>Pessoa</label>
+				<link>/GerenciarPessoa</link>
+			</item>
+			<item>
+				<label>Conta</label>
+				<link>/conta</link>
+			</item>
+		</submenu>
+	</item>
+</menu>
