@@ -9,12 +9,14 @@ class Pessoa extends CI_Model
 
 	public function listar()
 	{
-		$query = $this->db->query("
-			SELECT *
-			FROM pessoa
-		");
+		$query = $this->db->get('pessoa');
 
 		return $query->result();
+	}
+
+	public function salvar(array $dados)
+	{
+		$this->db->insert('pessoa', $dados);
 	}
 }
 ?>

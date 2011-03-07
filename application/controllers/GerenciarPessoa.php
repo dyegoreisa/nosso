@@ -22,11 +22,11 @@ class GerenciarPessoa extends CI_Controller
 		$this->load->helper('form');
 		$this->load->library('BasicForm');
 
-		$this->basicform->addInput('Nome: ', 'nome', 'nome', 'nome', '');
-		$this->basicform->addInput('Sobrenome: ', 'sobrenome', 'sobrenome', 'sobrenome', '');
-		$formRadio = $this->basicform->addRadio('Sexo: ', 'sexo', 'sexo', '');
-		$formRadio->addItem('Masculino', 'sexo', 'MasculinoId', '');
-		$formRadio->addItem('Feminino', 'sexo', 'FemininoId', '');
+		$this->basicform->addInput('Nome: ', 'nome', 'nome', set_value('nome'));
+		$this->basicform->addInput('Sobrenome: ', 'sobrenome', 'sobrenome', set_value('sobrenome'));
+		$formRadio = $this->basicform->addRadio('Sexo: ', 'sexo', 'sexo');
+		$formRadio->addItem('Masculino', 'sexo', 'MasculinoId', 'Masculino', set_radio('sexo', 'Masculino'));
+		$formRadio->addItem('Feminino', 'sexo', 'FemininoId', 'Feminino', set_radio('sexo', 'Feminino'));
 
 		if(isset($id) && !empty($id)) {
 			$titulo = 'Alterar cadastro de [fulado]';
@@ -35,13 +35,34 @@ class GerenciarPessoa extends CI_Controller
 		}
 
 		$this->load->view('principal', array(
-			'template' => 'GerenciarPessoa/editar',
+			'template' => 'form',
 			'titulo'   => $titulo,
 			'dados'    => array(
-				'action' => '/Gerenciar/salvar',
+				'action' => '/GerenciarPessoa/salvar',
 				'submit' => 'Salvar'
 			)
 		));
+	}
+
+	public function salvar()
+	{
+		$this->load->library('form_validation');
+
+		$this->form_validation->set_rules('nome', 'Nome', 'required');
+		$this->form_validation->set_rules('sobrenome', 'Sobrenome', 'required');
+		$this->form_validation->set_rules('sexo', 'Sexo', 'required');
+
+		if ($this->form_validation->run() === FALSE) {
+			$this->editar();
+		} else {
+
+			$this->load->model('pessoa');
+
+			$this->pessoa->salvar($_POST);
+
+			$this->listar();
+		}
+
 	}
 
 	public function listar()

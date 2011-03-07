@@ -8,12 +8,12 @@ class BasicForm
 
 	public function addInput($label, $name, $id, $value)
 	{
-		$this->itens[] = new ItemForm($label, $name, $id, $value, 'input');
+		$this->itens[] = new ItemForm($label, $name, $id, $value, NULL, 'input');
 	}
 	
-	public function addRadio($label, $name, $id, $value)
+	public function addRadio($label, $name, $id)
 	{
-		$item = new ItemForm($label, $name, $id, $value, 'radio');
+		$item = new ItemForm($label, $name, $id, '', NULL, 'radio');
 		$this->itens[] = $item;
 		return $item;
 	}
