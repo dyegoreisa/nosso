@@ -6,22 +6,24 @@ class ItemForm
 	private $name;
 	private $id;
 	private $value;
+	private $checked;
 	private $type;
 
 	private $itens;
 
-	public function __construct($label, $name, $id, $value, $type)
+	public function __construct($label, $name, $id, $value, $checked, $type)
 	{
-		$this->label = $label;
-		$this->name  = $name;
-		$this->id    = $id;
-		$this->value = $value;
-		$this->type  = $type;
+		$this->label   = $label;
+		$this->name    = $name;
+		$this->id      = $id;
+		$this->value   = $value;
+		$this->checked = empty($checked) ? NULL : $checked;
+		$this->type    = $type;
 	}
 
-	public function addItem($label, $name, $id, $value, $type = null)
+	public function addItem($label, $name, $id, $value, $checked = null, $type = null)
 	{
-		$this->itens[] = new ItemForm($label, $name, $id, $value, $type);
+		$this->itens[] = new ItemForm($label, $name, $id, $value, $checked, $type);
 	}
 	public function getLabel() {
 		return $this->label;
@@ -46,15 +48,20 @@ class ItemForm
 	public function getArrayAttr()
 	{
 		return array(
-			$this->name,
-			$this->id,
-			$this->value
+			'name'  => $this->name,
+			'id'    => $this->id,
+			'value' => $this->value
 		);
 	}
 
 	public function getItens()
 	{
 		return $this->itens;
+	}
+
+	public function isChecked()
+	{
+		return isset($this->checked) ? TRUE : FALSE;
 	}
 }
 ?>

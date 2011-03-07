@@ -1,4 +1,5 @@
 <?php
+echo validation_errors();
 echo form_open($action);
 foreach ($this->basicform->getItens() as $item) {
     switch($item->getType())
@@ -12,7 +13,12 @@ foreach ($this->basicform->getItens() as $item) {
 		case 'radio':
 			echo form_fieldset($item->getLabel());
 			foreach ($item->getItens() as $subItem) {
-				echo form_radio($subItem->getName(), $subItem->getValue());
+				echo form_radio(array(
+					'name'    => $subItem->getName(),
+					'id'      => $subItem->getId(),
+					'value'   => $subItem->getValue(),
+					'checked' => $subItem->isChecked()
+				));
 				echo form_label($subItem->getLabel(), $subItem->getId());
 			}
 			echo form_fieldset_close();
