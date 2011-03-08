@@ -17,7 +17,9 @@ class ItemForm
 		$this->name    = $name;
 		$this->id      = $id;
 		$this->value   = $value;
-		$this->checked = empty($checked) ? NULL : $checked;
+		if (!empty($checked) && $checked == $this->value) {
+			$this->checked = TRUE;
+		}
 		$this->type    = $type;
 	}
 
