@@ -2,25 +2,25 @@
 
 class Menu
 {
-	const MENU_FILE = 'application/config/menu.xml';
+    const MENU_FILE = 'application/config/menu.xml';
 
-	public function render()
+    public function render()
     {
         $menu = simplexml_load_file(self::MENU_FILE);
 
-		echo '<ul>';
+        echo '<ul>';
         foreach ($menu as $item) {
-			echo "<li><a href=\"{$item->link}\">{$item->label}</a>";
+            echo "<li><a href=\"{$item->link}\">{$item->label}</a>";
             if (isset($item->submenu) === true) {
-				echo '<ul>';
-				foreach ($item->submenu->item as $subitem) {
+                echo '<ul>';
+                foreach ($item->submenu->item as $subitem) {
                     echo "<li><a href=\"{$subitem->link}\">{$subitem->label}</a></li>";
                 }
-				echo '</ul>';
+                echo '</ul>';
             }
-			echo '</li>';
+            echo '</li>';
         }
-		echo '</ul>';
+        echo '</ul>';
     }
 }
 

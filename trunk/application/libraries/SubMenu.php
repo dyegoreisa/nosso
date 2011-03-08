@@ -4,19 +4,19 @@ require_once 'application/libraries/ItemMenu.php';
 
 class SubMenu
 {
-	private $itens;
+    private $itens;
 
-	public function addItem($label, $link)
-	{
-		$this->itens[] = new ItemMenu($label, $link);
-	}
+    public function addItem($label, $link)
+    {
+        $this->itens[] = new ItemMenu($label, $link);
+    }
 
-	public function render()
-	{
-		echo '<ul>';
-		foreach ($this->itens as $item) {
-			echo "<li><a href=\"{$item->getLink()}\">{$item->getLabel()}</a></li>";
-		}
-		echo '</ul>';
-	}
+    public function render()
+    {
+        echo '<ul>';
+        foreach ($this->itens as $item) {
+            echo "<li><a href=\"{$item->getLink()}\">{$item->getLabel()}</a></li>";
+        }
+        echo '</ul>';
+    }
 }
