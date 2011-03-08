@@ -6,15 +6,19 @@ class Acoes
 {
     private $itens;
 
-    public function addItem($label, $link)
+    public function addItem($label, $link, $excluir = NULL)
     {
-        $this->itens[] = new ItemMenu($label, $link);
+        $this->itens[] = new ItemMenu($label, $link, $excluir);
     }
 
-    public function render($id)
+    public function render($id, $descricao = '')
     {
         foreach ($this->itens as $item) {
-            echo "<a href=\"{$item->getLink()}/{$id}\">{$item->getLabel()}</a>";
+			$attr = '';
+			if ($item->isExcluir()) {
+				$attr = "class=\"excluir\" alt=\"{$descricao}\"";
+			}
+			echo "<a {$attr} href=\"{$item->getLink()}/{$id}\">{$item->getLabel()}</a>";
         }
     }
 }
