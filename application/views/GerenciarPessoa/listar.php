@@ -1,4 +1,4 @@
-<table border="1">
+<table border="1" class="layout-grid">
     <tr>
         <th>Nome</th>
         <th>Sobrenome</th>
@@ -10,7 +10,7 @@
         <td><?= $pessoa->nome; ?></td>
         <td><?= $pessoa->sobrenome; ?></td>
         <td><?= $pessoa->sexo; ?></td>
-        <td><?= $this->acoes->render($pessoa->id); ?></td>
+        <td><?= $this->acoes->render($pessoa->id, $pessoa->nome); ?></td>
     </tr>
 <?php endforeach; ?>
 </table>

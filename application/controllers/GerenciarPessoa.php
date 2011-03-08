@@ -13,7 +13,7 @@ class GerenciarPessoa extends CI_Controller
 
         // Ações
         $this->acoes->addItem('[ A ]', '/GerenciarPessoa/editar');
-        $this->acoes->addItem('[ X ]', '/GerenciarPessoa/excluir');
+        $this->acoes->addItem('[ X ]', '/GerenciarPessoa/excluir', TRUE);
     }
 
     public function index()

@@ -8,7 +8,7 @@ class Menu
     {
         $menu = simplexml_load_file(self::MENU_FILE);
 
-        echo '<ul>';
+        echo '<ul class="sf-menu">';
         foreach ($menu as $item) {
             echo "<li><a href=\"{$item->link}\">{$item->label}</a>";
             if (isset($item->submenu) === true) {

@@ -13,7 +13,7 @@
 			</item>
 			<item>
 				<label>Conta</label>
-				<link>/conta</link>
+				<link>/GerenciarOperacaoContabil</link>
 			</item>
 		</submenu>
 	</item>
