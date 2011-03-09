@@ -13,6 +13,7 @@
         <script type="text/javascript" src="http://<?= $_SERVER['HTTP_HOST']; ?>/javascript/ui/jquery.ui.button.js"></script>
         <script type="text/javascript" src="http://<?= $_SERVER['HTTP_HOST']; ?>/javascript/ui/jquery.ui.datepicker.js"></script>
         <script type="text/javascript" src="http://<?= $_SERVER['HTTP_HOST']; ?>/javascript/ui/i18n/jquery.ui.datepicker-pt-BR.js"></script>
+
         <script type="text/javascript">
             $(document).ready(function() {
                 $('a.excluir').click(function () {
@@ -31,7 +32,7 @@
                     showOtherMonths: true,
                     selectOtherMonths: true,
                     showButtonPanel: true,
-                             showOn: "button",
+                		 	showOn: "button",
                     buttonImage: "/theme/images/calendar.gif",
                     buttonImageOnly: true,
                     constrainInput: false
@@ -45,7 +46,7 @@
         <div id="menu">
             <?php $this->menu->render(); ?>
         </div>
-        <br/><br/><br/>
+		<br/><br/><br/>
         <div id="main">
             <?php if (isset($template)): ?>
             <?php $dados = isset($dados) ? $dados : null; ?>
@@ -54,7 +55,7 @@
                     <div id="submenu">
                         <?php $this->submenu->render(); ?>
                     </div>
-                    <?php $this->load->view($template, $dados); ?>
+					<?php $this->load->view($template, $dados); ?>
                 </fieldset>
             <?php endif; ?>
         </div>

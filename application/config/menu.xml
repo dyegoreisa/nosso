@@ -5,6 +5,10 @@
 		<link>/principal</link>
 	</item>
 	<item>
+		<label>Relatorio de contas</label>
+		<link>/Relatorio</link>
+	</item>
+	<item>
 		<label>Gerenciar</label>
 		<submenu>
 			<item>

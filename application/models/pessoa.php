@@ -9,6 +9,7 @@ class Pessoa extends CI_Model
 
     public function listar()
     {
+		$this->db->order_by('nome');
         $query = $this->db->get('pessoa');
 
         return $query->result();

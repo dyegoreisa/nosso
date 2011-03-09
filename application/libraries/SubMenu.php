@@ -13,10 +13,12 @@ class SubMenu
 
     public function render()
     {
-        echo '<ul>';
-        foreach ($this->itens as $item) {
-            echo "<li><a href=\"{$item->getLink()}\">{$item->getLabel()}</a></li>";
+        if (isset($this->itens)) {
+            echo '<ul>';
+            foreach ($this->itens as $item) {
+                echo "<li><a href=\"{$item->getLink()}\">{$item->getLabel()}</a></li>";
+            }
+            echo '</ul>';
         }
-        echo '</ul>';
     }
 }
