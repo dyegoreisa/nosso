@@ -6,26 +6,28 @@ class ItemForm
     private $name;
     private $id;
     private $value;
+    private $class;
     private $checked;
     private $type;
 
     private $itens;
 
-    public function __construct($label, $name, $id, $value, $checked, $type)
+    public function __construct($label, $name, $id, $value, $class, $checked, $type)
     {
         $this->label   = $label;
         $this->name    = $name;
         $this->id      = $id;
         $this->value   = $value;
+        $this->class   = $class;
         if (!empty($checked) && $checked == $this->value) {
             $this->checked = TRUE;
         }
         $this->type    = $type;
     }
 
-    public function addItem($label, $name, $id, $value, $checked = null, $type = null)
+    public function addItem($label, $name, $id, $value, $class, $checked = null, $type = null)
     {
-        $this->itens[] = new ItemForm($label, $name, $id, $value, $checked, $type);
+        $this->itens[] = new ItemForm($label, $name, $id, $value, $class, $checked, $type);
     }
     public function getLabel() {
         return $this->label;
@@ -43,6 +45,10 @@ class ItemForm
         return $this->value;
     }
 
+    public function getClass() {
+        return $this->class;
+    }
+
     public function getType() {
         return $this->type;
     }
@@ -55,6 +61,15 @@ class ItemForm
             'value' => $this->value
         );
     }
+
+     public function getOptionsForDropdown()
+     {
+        $options = array();
+        foreach ($this->itens as $item) {
+            $options[$item->getId()] = $item->getLabel();
+        }
+        return $options;
+     }
 
     public function getItens()
     {

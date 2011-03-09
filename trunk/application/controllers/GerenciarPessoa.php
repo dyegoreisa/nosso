@@ -34,15 +34,15 @@ class GerenciarPessoa extends CI_Controller
 
         $nome = $sobrenome = $sexo = NULL;
         if(isset($id) && !empty($id)) {
-            $this->load->model('pessoa');
-            $pessoa = $this->pessoa->getById($id);
+            $this->load->model('Pessoa');
+            $pessoa = $this->Pessoa->getById($id);
             $titulo = "Alterar cadastro de {$pessoa->nome}";
         } else {
             $titulo = 'Novo cadastro de pessoa';
         }
 
-        $this->basicform->addInput('Nome: ', 'nome', 'nome', isset($pessoa) ? $pessoa->nome: NULL);
-        $this->basicform->addInput('Sobrenome: ', 'sobrenome', 'sobrenome', isset($pessoa) ? $pessoa->sobrenome : NULL);
+        $this->basicform->addInput('Nome: ', 'nome', 'nome', '', isset($pessoa) ? $pessoa->nome: NULL);
+        $this->basicform->addInput('Sobrenome: ', 'sobrenome', 'sobrenome', '', isset($pessoa) ? $pessoa->sobrenome : NULL);
         $formRadio = $this->basicform->addRadio('Sexo: ', 'sexo', 'sexo');
         $formRadio->addItem('Masculino', 'sexo', 'MasculinoId', 'Masculino', isset($pessoa) ? $pessoa->sexo : NULL);
         $formRadio->addItem('Feminino', 'sexo', 'FemininoId', 'Feminino', isset($pessoa) ? $pessoa->sexo : NULL);
@@ -69,12 +69,12 @@ class GerenciarPessoa extends CI_Controller
         if ($this->form_validation->run() === FALSE) {
             $this->editar();
         } else {
-            $this->load->model('pessoa');
+            $this->load->model('Pessoa');
 
             if (isset($_POST['id'])) {
-                $this->pessoa->atualizar($_POST);
+                $this->Pessoa->atualizar($_POST);
             } else {
-                $this->pessoa->inserir($_POST);
+                $this->Pessoa->inserir($_POST);
             }
             $this->listar();
         }
@@ -83,10 +83,10 @@ class GerenciarPessoa extends CI_Controller
 
     public function listar($pessoas = NULL, $dado = '')
     {
-        $this->load->model('pessoa');
+        $this->load->model('Pessoa');
 
         if (!isset($pessoas)) {
-            $pessoas = $this->pessoa->listar();
+            $pessoas = $this->Pessoa->listar();
         }
 
         $this->load->view('principal', array(
@@ -102,7 +102,7 @@ class GerenciarPessoa extends CI_Controller
     {
         $this->load->helper('form');
         $this->load->library('BasicForm');
-        $this->basicform->addInput('', 'dado', 'dado', '');
+        $this->basicform->addInput('', 'dado', 'dado', '', '');
         $this->load->view('principal', array(
             'template' => 'form',
             'titulo'   => 'Buscar pessoa',
@@ -115,15 +115,15 @@ class GerenciarPessoa extends CI_Controller
 
     public function efetuarBusca()
     {
-        $this->load->model('pessoa');
-        $pessoas = $this->pessoa->buscar($this->input->post('dado'));
+        $this->load->model('Pessoa');
+        $pessoas = $this->Pessoa->buscar($this->input->post('dado'));
         $this->listar($pessoas, $this->input->post('dado'));
     }
 
     public function excluir($id)
     {
-        $this->load->model('pessoa');
-        $this->pessoa->excluir($id);
+        $this->load->model('Pessoa');
+        $this->Pessoa->excluir($id);
         $this->listar();
     }
 }

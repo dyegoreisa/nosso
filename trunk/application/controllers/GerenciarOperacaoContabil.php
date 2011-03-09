@@ -34,16 +34,21 @@ class GerenciarOperacaoContabil extends CI_Controller
 
         $nome = $sobrenome = $sexo = NULL;
         if(isset($id) && !empty($id)) {
-            $this->load->model('operacaoContabil');
-            $operacaoContabil = $this->operacaocontabil->getById($id);
+            $this->load->model('OperacaoContabil');
+            $operacaoContabil = $this->OperacaoContabil->getById($id);
             $titulo = "Alterar cadastro da conta {$operacaoContabil->protocolo}";
         } else {
             $titulo = 'Novo cadastro de conta';
         }
 
-        $this->basicform->addInput('Tipo: ', 'tipo_operacao_contabil_id', 'tipo_operacao_contabil_id', isset($operacaoContabil) ? $operacaoContabil->tipo_operacao_contabil_id: NULL);
-        $this->basicform->addInput('Valor: ', 'valor', 'valor', isset($operacaoContabil) ? $operacaoContabil->valor : NULL);
-		$this->basicform->addInput('Protocolo: ', 'protocolo', 'protocolo', isset($operacaoContabil) ? $operacaoContabil->protocolo : NULL);
+        $this->load->model('TipoOperacaoContabil');
+        $opcoes = $this->TipoOperacaoContabil->getOptionsForDropdown();
+
+        $this->basicform->addDropdown('Tipo: ', 'tipo_operacao_contabil_id', 'tipo_operacao_contabil_id',
+            isset($operacaoContabil) ? $operacaoContabil->tipo_operacao_contabil_id: NULL, $opcoes);
+        $this->basicform->addInput('Valor: ', 'valor', 'valor', '', isset($operacaoContabil) ? $operacaoContabil->valor : NULL);
+        $this->basicform->addInput('Vencimento: ', 'vencimento', 'vencimento', 'data', isset($operacaoContabil) ? $operacaoContabil->vencimento : NULL);
+        $this->basicform->addInput('Protocolo: ', 'protocolo', 'protocolo', '', isset($operacaoContabil) ? $operacaoContabil->protocolo : NULL);
 
         $this->load->view('principal', array(
             'template' => 'form',
@@ -60,18 +65,19 @@ class GerenciarOperacaoContabil extends CI_Controller
     {
         $this->load->library('form_validation');
 
-        $this->form_validation->set_rules('tipo_operacao_contabil', 'Tipo', 'required');
+        $this->form_validation->set_rules('tipo_operacao_contabil_id', 'Tipo', 'required');
         $this->form_validation->set_rules('valor', 'Valor', 'required');
+        $this->form_validation->set_rules('vencimento', 'Vencimento', 'required');
 
         if ($this->form_validation->run() === FALSE) {
             $this->editar();
         } else {
-            $this->load->model('operacaoContabil');
+            $this->load->model('OperacaoContabil');
 
             if (isset($_POST['id'])) {
-                $this->operacaocontabil->atualizar($_POST);
+                $this->OperacaoContabil->atualizar($_POST);
             } else {
-                $this->operacaocontabil->inserir($_POST);
+                $this->OperacaoContabil->inserir($_POST);
             }
             $this->listar();
         }
@@ -80,10 +86,10 @@ class GerenciarOperacaoContabil extends CI_Controller
 
     public function listar($operacoes = NULL, $dado = '')
     {
-        $this->load->model('operacaocontabil');
+        $this->load->model('OperacaoContabil');
 
         if (!isset($operacoes)) {
-            $operacoes = $this->operacaocontabil->listar();
+            $operacoes = $this->OperacaoContabil->listar();
         }
 
         $this->load->view('principal', array(
@@ -99,7 +105,7 @@ class GerenciarOperacaoContabil extends CI_Controller
     {
         $this->load->helper('form');
         $this->load->library('BasicForm');
-        $this->basicform->addInput('', 'dado', 'dado', '');
+        $this->basicform->addInput('', 'dado', 'dado', 'data', '');
         $this->load->view('principal', array(
             'template' => 'form',
             'titulo'   => 'Buscar conta',
@@ -112,15 +118,15 @@ class GerenciarOperacaoContabil extends CI_Controller
 
     public function efetuarBusca()
     {
-        $this->load->model('operacaoContabil');
-        $operacoes = $this->operacaocontabil->buscar($this->input->post('dado'));
+        $this->load->model('OperacaoContabil');
+        $operacoes = $this->OperacaoContabil->buscar($this->input->post('dado'));
         $this->listar($operacoes, $this->input->post('dado'));
     }
 
     public function excluir($id)
     {
-        $this->load->model('operacaoContabil');
-        $this->operacaocontabil->excluir($id);
+        $this->load->model('OperacaoContabil');
+        $this->OperacaoContabil->excluir($id);
         $this->listar();
     }
 }
