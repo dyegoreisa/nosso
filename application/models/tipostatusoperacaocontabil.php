@@ -1,11 +1,11 @@
-<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed'); 
 
-class TipoStatusOperacaoContabil extends CI_Model
-{
-    public function __construct()
-    {
-        parent::__construct();
-    }
+class TipoStatusOperacaoContabil extends CI_Model 
+{ 
+    public function __construct() 
+    { 
+        parent::__construct(); 
+    } 
 
     public function listar()
     {
@@ -31,13 +31,15 @@ class TipoStatusOperacaoContabil extends CI_Model
     public function getById($id)
     {
         $query = $this->db->get_where('tipo_status_operacao_contabil', array('id' => $id));
-        $operacao = $query->result();
-        return $operacao[0];
+        $tipo_status_operacao_contabil = $query->result();
+        return $tipo_status_operacao_contabil[0];
     }
 
     public function buscar($dado)
     {
-        $this->db->select('*')->from('tipo_status_operacao_contabil')->like($dado);
+        $this->db->select('*')->from('tipo_status_operacao_contabil')->or_like(array(
+            'nome' => $dado
+        ));
         $query = $this->db->get();
         return $query->result();
     }
@@ -47,15 +49,21 @@ class TipoStatusOperacaoContabil extends CI_Model
         $this->db->delete('tipo_status_operacao_contabil', array('id' => $id));
     }
 
-	public function getOptionsForDropdown()
-	{
-		$status = array(0 => '------');
-		$result = $this->listar();
-		foreach ($result as $val) {
-			$status[$val->id] = $val->nome;
-		}
-		return $status;
-	}
-}
-?>
+    public function getOptionsForDropdown()
+    {
+        $tipos = array(0 => '------');
+        $result = $this->listar();
+        foreach ($result as $tipo) {
+            $tipos[$tipo->id] = $tipo->nome;
+        }
+        return $tipos;
+    }
 
+    public function getIdByName($nome)
+    {
+        $query = $this->db->get_where('tipo_status_operacao_contabil', array('nome' => $nome));
+        $tipo_status_operacao_contabil = $query->result();
+        return $tipo_status_operacao_contabil[0]->id;
+    }
+} 
+?>
