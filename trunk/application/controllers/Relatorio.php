@@ -41,14 +41,14 @@ class Relatorio extends CI_Controller
         $this->makereport->addFiltro('tipo', $this->input->post('tipo'));
         $this->makereport->addFiltro('status', $this->input->post('status'));
 
-        $dados   = $this->makereport->process();
+        $contas  = $this->makereport->process();
 		$filtros = $this->makereport->getDisplayFiltros();
 
         $this->load->view('principal', array(
             'template' => 'Relatorio/resultado',
             'titulo'   => 'Relatório de contas',
             'dados'    => array(
-				'contas'  => $dados,
+				'contas'  => $contas,
 				'filtros' => $filtros
 			)
         ));

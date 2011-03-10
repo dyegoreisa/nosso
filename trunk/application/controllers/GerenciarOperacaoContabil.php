@@ -13,6 +13,7 @@ class GerenciarOperacaoContabil extends CI_Controller
 
         // Ações
         $this->acoes->addItem('[ A ]', '/GerenciarOperacaoContabil/editar');
+        $this->acoes->addItem('[ S ]', '/GerenciarOperacaoContabil/selecionarStatus');
         $this->acoes->addItem('[ X ]', '/GerenciarOperacaoContabil/excluir', TRUE);
     }
 
@@ -127,6 +128,41 @@ class GerenciarOperacaoContabil extends CI_Controller
     {
         $this->load->model('OperacaoContabil');
         $this->OperacaoContabil->excluir($id);
+        $this->listar();
+    }
+
+    public function selecionarStatus($id)
+    {
+        $this->load->helper('form');
+        $this->load->library('BasicForm');
+
+        $this->load->model('TipoStatusOperacaoContabil');
+        $statusOperacoes = $this->TipoStatusOperacaoContabil->getOptionsForDropdown();
+        $this->basicform->addDropdown('Status: ', 'status', 'status', '', $statusOperacoes);
+
+        $this->load->model('OperacaoContabil');
+        $operacaoContabil = $this->OperacaoContabil->getById($id);
+        $titulo = "{$operacaoContabil->tipo} {$operacaoContabil->vencimento} {$operacaoContabil->valor} {$operacaoContabil->status}";
+
+        $this->load->view('principal', array(
+            'template' => 'form',
+            'titulo'   => "Alterar status da conta: {$titulo}",
+            'dados'    => array(
+                'action' => '/GerenciarOperacaoContabil/alterarStatus',
+                'submit' => 'Alterar',
+                'id'     => $id
+            )
+        ));
+    }
+
+    public function alterarStatus()
+    {
+        $id     = $this->input->post('id'); 
+        $idStatus = $this->input->post('status');
+
+        $this->load->model('StatusOperacaoContabil');
+        $this->StatusOperacaoContabil->alterarStatus($id, $idStatus);
+
         $this->listar();
     }
 }

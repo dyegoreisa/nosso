@@ -27,6 +27,11 @@ class BasicForm
 		$this->itens[] = $item;
 	}
 
+    public function addCheckbox($label, $name, $id, $value, $checked)
+    {
+        $this->itens[] = new ItemForm($label, $name, $id, $value, '', $checked, 'checkbox');
+    }
+
     public function getItens()
     {
         return $this->itens;

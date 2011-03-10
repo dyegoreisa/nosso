@@ -43,6 +43,13 @@ foreach ($this->basicform->getItens() as $item) {
             echo form_label($item->getLabel(), $item->getId());
             echo form_dropdown($item->getName(), $item->getOptionsForDropdown(), $valor);
             break;
+
+        case 'checkbox':
+            $checked = set_checkbox($item->getName(), '1');
+            $checked = empty($checked) ? $item->isChecked() : TRUE;
+            echo form_label($item->getLabel(), $item->getId());
+            echo form_checkbox($item->getName(), $item->getValue());
+            break;
     }
     echo '<br/>';
 }
