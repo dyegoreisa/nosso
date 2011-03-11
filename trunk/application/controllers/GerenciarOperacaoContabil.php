@@ -138,15 +138,22 @@ class GerenciarOperacaoContabil extends CI_Controller
 
         $this->load->model('TipoStatusOperacaoContabil');
         $statusOperacoes = $this->TipoStatusOperacaoContabil->getOptionsForDropdown();
-        $this->basicform->addDropdown('Status: ', 'status', 'status', '', $statusOperacoes);
 
         $this->load->model('OperacaoContabil');
         $operacaoContabil = $this->OperacaoContabil->getById($id);
-        $titulo = "{$operacaoContabil->tipo} {$operacaoContabil->vencimento} {$operacaoContabil->valor} {$operacaoContabil->status}";
+
+        $titulo = "{$operacaoContabil->tipo} -
+        {$operacaoContabil->protocolo} <br/>
+        R$ {$operacaoContabil->valor} com vencimento em 
+        {$operacaoContabil->vencimento} <br/>
+        {$operacaoContabil->status}";
+        $this->basicform->addLabel($titulo, 'label_long');
+        $this->basicform->addDropdown('Status: ', 'status', 'status', '', $statusOperacoes);
+
 
         $this->load->view('principal', array(
             'template' => 'form',
-            'titulo'   => "Alterar status da conta: {$titulo}",
+            'titulo'   => "Alterar status da conta",
             'dados'    => array(
                 'action' => '/GerenciarOperacaoContabil/alterarStatus',
                 'submit' => 'Alterar',

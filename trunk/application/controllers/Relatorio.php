@@ -35,11 +35,20 @@ class Relatorio extends CI_Controller
 
     public function executar()
     {
-        $this->load->library('MakeReport');
+        $this->load->library('Report/MakeReport');
+
+        // Filtros
         $this->makereport->addFiltro('data_inicio', $this->input->post('data_inicio'), TRUE);
         $this->makereport->addFiltro('data_fim', $this->input->post('data_fim'), TRUE);
         $this->makereport->addFiltro('tipo', $this->input->post('tipo'));
         $this->makereport->addFiltro('status', $this->input->post('status'));
+
+        // Campos
+        $this->makereport->addField('status', 'Status', 'tsoc.nome as status', 'status');
+        $this->makereport->addField('tipo', 'Tipo', 'toc.nome as tipo', 'tipo');
+        $this->makereport->addField('vencimento', 'Vencimento', "DATE_FORMAT(oc.vencimento, '%d/%m/%Y') as vencimento", 'vencimento');
+        $this->makereport->addField('valor', 'Valor', 'FORMAT(oc.valor, 2) as valor', NULL);
+        $this->makereport->addField('protocolo', 'Protocolo', 'oc.protocolo', NULL);
 
         $contas  = $this->makereport->process();
 		$filtros = $this->makereport->getDisplayFiltros();

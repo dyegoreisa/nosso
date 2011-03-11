@@ -1,5 +1,7 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
+require_once 'application/libraries/Report/Field.php';
+
 class MakeReport
 {
     private $CI;
@@ -8,11 +10,41 @@ class MakeReport
     private $regexData;
     private $regexData2;
 
+    private $fields;
+
     public function __construct()
     {
+        $this->CI =& get_instance();
         $this->regexData  = '/^(0[1-9]|[12][0-9]|3[01])\/(0[1-9]|1[012])\/([12][0-9]{3})$/';
         $this->regexData2 = '/^([12][0-9]{3})-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])$/';
-        $this->CI =& get_instance();
+    }
+
+    public function addField($name, $label, $aliasDB, $aliasOrder)
+    {
+        $this->fields[] = new Field($name, $label, $aliasDB, $aliasOrder);
+    }
+
+    private function getCamposBase()
+    {
+        return "
+            SELECT
+                oc.id
+                , DATE_FORMAT(oc.vencimento, '%d/%m/%Y') as vencimento
+                , FORMAT(oc.valor, 2) as valor
+                , oc.protocolo
+                , toc.nome
+                , tsoc.nome as status
+        ";
+    }
+
+    private function getSqlBase()
+    {
+        return "
+            FROM operacao_contabil oc
+                JOIN tipo_operacao_contabil toc ON toc.id = oc.tipo_operacao_contabil_id
+                JOIN status_operacao_contabil soc ON soc.operacao_contabil_id = oc.id AND soc.data_fim IS NULL
+                JOIN tipo_status_operacao_contabil tsoc ON tsoc.id = soc.tipo_status_operacao_contabil_id
+        ";
     }
 
     public function addFiltro($key, $val, $isData = FALSE)
@@ -61,21 +93,12 @@ class MakeReport
 
     public function process()
     {
-        $query = $this->CI->db->query("
-            SELECT
-                oc.id
-                , DATE_FORMAT(oc.vencimento, '%d/%m/%Y') as vencimento
-                , FORMAT(oc.valor, 2) as valor
-                , oc.protocolo
-                , toc.nome
-                , tsoc.nome as status
-            FROM operacao_contabil oc
-                JOIN tipo_operacao_contabil toc ON toc.id = oc.tipo_operacao_contabil_id
-                JOIN status_operacao_contabil soc ON soc.operacao_contabil_id = oc.id AND soc.data_fim IS NULL
-                JOIN tipo_status_operacao_contabil tsoc ON tsoc.id = soc.tipo_status_operacao_contabil_id
-            {$this->makeWhere()}
-            ORDER BY oc.vencimento
-        ");
+        $query = $this->CI->db->query(
+            $this->getCamposBase() . 
+            $this->getSqlBase() . 
+            $this->makeWhere() . 
+            " ORDER BY oc.vencimento"
+        );
 
         return $query->result();
     }

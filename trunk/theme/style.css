@@ -48,6 +48,10 @@ div.form {
 	display: -moz-grid;
 }
 
+div.label_long {
+    width: 670px;
+}
+
 /* Normal
    -------------------------------- */
 
