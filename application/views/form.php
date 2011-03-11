@@ -8,6 +8,10 @@ if(isset($id)) {
 foreach ($this->basicform->getItens() as $item) {
     switch($item->getType())
     {
+        case 'label':
+            echo "<div class=\"{$item->getClass()}\">{$item->getLabel()}</div>";
+            break;
+
         case 'input':
             $valor = set_value($item->getName());
             $valor = empty($valor) ? $item->getValue() : $valor;

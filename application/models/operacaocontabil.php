@@ -12,6 +12,7 @@ class OperacaoContabil extends CI_Model
         $this->sqlBase = "
             SELECT
                 oc.id
+                , oc.tipo_operacao_contabil_id
                 , DATE_FORMAT(oc.vencimento, '%d/%m/%Y') as vencimento
                 , FORMAT(oc.valor, 2) as valor
                 , oc.protocolo

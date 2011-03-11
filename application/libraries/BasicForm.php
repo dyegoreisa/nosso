@@ -6,6 +6,11 @@ class BasicForm
 {
     private $itens;
 
+    public function addLabel($label, $class)
+    {
+        $this->itens[] = new ItemForm($label, '', '', '', $class, NULL, 'label');
+    }
+
     public function addInput($label, $name, $id, $class, $value)
     {
         $this->itens[] = new ItemForm($label, $name, $id, $value, $class, NULL, 'input');
