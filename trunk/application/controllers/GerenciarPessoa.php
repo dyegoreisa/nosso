@@ -8,8 +8,8 @@ class GerenciarPessoa extends CI_Controller
 
         // SubMenu
         $this->submenu->addItem('Novo', '/GerenciarPessoa/editar');
-        $this->submenu->addItem('Buscar', '/GerenciarPessoa/buscar');
-        $this->submenu->addItem('Listar', '/GerenciarPessoa/listar');
+        $this->submenu->addItem('Busca', '/GerenciarPessoa/buscar');
+        $this->submenu->addItem('Lista', '/GerenciarPessoa/listar');
 
         // Ações
         $this->acoes->addItem('[ A ]', '/GerenciarPessoa/editar');

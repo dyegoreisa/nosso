@@ -51,7 +51,7 @@ class TipoStatusOperacaoContabil extends CI_Model
 
     public function getOptionsForDropdown()
     {
-        $tipos = array(0 => '------');
+        $tipos = array('' => '------');
         $result = $this->listar();
         foreach ($result as $tipo) {
             $tipos[$tipo->id] = $tipo->nome;

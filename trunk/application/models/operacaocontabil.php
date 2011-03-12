@@ -13,13 +13,16 @@ class OperacaoContabil extends CI_Model
             SELECT
                 oc.id
                 , oc.tipo_operacao_contabil_id
+                , oc.categoria_operacao_contabil_id
                 , DATE_FORMAT(oc.vencimento, '%d/%m/%Y') as vencimento
-                , FORMAT(oc.valor, 2) as valor
+                , oc.valor
                 , oc.protocolo
                 , toc.nome as tipo
+                , coc.nome as categoria
                 , tsoc.nome as status
             FROM operacao_contabil oc
                 JOIN tipo_operacao_contabil toc ON toc.id = oc.tipo_operacao_contabil_id
+                JOIN categoria_operacao_contabil coc ON coc.id = oc.categoria_operacao_contabil_id
                 JOIN status_operacao_contabil soc ON soc.operacao_contabil_id = oc.id AND soc.data_fim IS NULL
                 JOIN tipo_status_operacao_contabil tsoc ON tsoc.id = soc.tipo_status_operacao_contabil_id
         ";
@@ -68,16 +71,18 @@ class OperacaoContabil extends CI_Model
         $valor      = $dado;
         $protocolo  = "%{$dado}%";
         $tipo       = "%{$dado}%";
+        $categoria  = "%{$dado}%";
         $status     = "%{$dado}%";
 
         $query = $this->db->query($this->sqlBase . '
             WHERE oc.vencimento = ?
                 OR oc.valor = ?
                 OR oc.protocolo like ?
+                OR coc.nome like ?
                 OR toc.nome like ?
                 OR tsoc.nome like ?
             ORDER BY toc.nome
-        ', array($vencimento, $valor, $protocolo, $tipo, $status));
+        ', array($vencimento, $valor, $protocolo, $categoria, $tipo, $status));
 
         return $query->result();
     }
