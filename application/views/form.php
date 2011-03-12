@@ -16,6 +16,7 @@ foreach ($this->basicform->getItens() as $item) {
             $valor = set_value($item->getName());
             $valor = empty($valor) ? $item->getValue() : $valor;
             echo form_label($item->getLabel(), $item->getId());
+            echo '<br/>';
             echo form_input(array(
                 'name'    => $item->getName(),
                 'id'      => $item->getId(),
@@ -45,6 +46,7 @@ foreach ($this->basicform->getItens() as $item) {
             $valor = set_value($item->getName());
             $valor = empty($valor) ? $item->getValue() : $valor;
             echo form_label($item->getLabel(), $item->getId());
+            echo '<br/>';
             echo form_dropdown($item->getName(), $item->getOptionsForDropdown(), $valor);
             break;
 

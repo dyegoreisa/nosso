@@ -8,8 +8,8 @@ class GerenciarOperacaoContabil extends CI_Controller
 
         // SubMenu
         $this->submenu->addItem('Novo', '/GerenciarOperacaoContabil/editar');
-        $this->submenu->addItem('Buscar', '/GerenciarOperacaoContabil/buscar');
-        $this->submenu->addItem('Listar', '/GerenciarOperacaoContabil/listar');
+        $this->submenu->addItem('Busca', '/GerenciarOperacaoContabil/buscar');
+        $this->submenu->addItem('Lista', '/GerenciarOperacaoContabil/listar');
 
         // Ações
         $this->acoes->addItem('[ A ]', '/GerenciarOperacaoContabil/editar');
@@ -37,16 +37,25 @@ class GerenciarOperacaoContabil extends CI_Controller
         if(isset($id) && !empty($id)) {
             $this->load->model('OperacaoContabil');
             $operacaoContabil = $this->OperacaoContabil->getById($id);
-            $titulo = "Alterar cadastro da conta {$operacaoContabil->protocolo}";
+            $titulo = "Alterar cadastro da conta {$operacaoContabil->categoria}";
         } else {
             $titulo = 'Novo cadastro de conta';
         }
 
         $this->load->model('TipoOperacaoContabil');
-        $opcoes = $this->TipoOperacaoContabil->getOptionsForDropdown();
+        $tipoOpcoes = $this->TipoOperacaoContabil->listar();
 
-        $this->basicform->addDropdown('Tipo: ', 'tipo_operacao_contabil_id', 'tipo_operacao_contabil_id',
-            isset($operacaoContabil) ? $operacaoContabil->tipo_operacao_contabil_id: NULL, $opcoes);
+        $this->load->model('CategoriaOperacaoContabil');
+        $categoriaOpcoes = $this->CategoriaOperacaoContabil->getOptionsForDropdown();
+
+        $formRadio = $this->basicform->addRadio('Tipo: ', 'tipo_operacao_contabil_id', 'tipo_operacao_contabil_id');
+        foreach ($tipoOpcoes as $opcao) {
+            $formRadio->addItem($opcao->nome, 'tipo_operacao_contabil_id', $opcao->nome.$opcao->id, $opcao->id, isset($operacaoContabil) ? $operacaoContabil->tipo_operacao_contabil_id : NULL);
+        }
+
+        $this->basicform->addDropdown('Categoria: ', 'categoria_operacao_contabil_id', 'categoria_operacao_contabil_id',
+            isset($operacaoContabil) ? $operacaoContabil->categoria_operacao_contabil_id: NULL, $categoriaOpcoes);
+
         $this->basicform->addInput('Valor: ', 'valor', 'valor', '', isset($operacaoContabil) ? $operacaoContabil->valor : NULL);
         $this->basicform->addInput('Vencimento: ', 'vencimento', 'vencimento', 'data', isset($operacaoContabil) ? $operacaoContabil->vencimento : NULL);
         $this->basicform->addInput('Protocolo: ', 'protocolo', 'protocolo', '', isset($operacaoContabil) ? $operacaoContabil->protocolo : NULL);
@@ -67,6 +76,7 @@ class GerenciarOperacaoContabil extends CI_Controller
         $this->load->library('form_validation');
 
         $this->form_validation->set_rules('tipo_operacao_contabil_id', 'Tipo', 'required');
+        $this->form_validation->set_rules('categoria_operacao_contabil_id', 'Categoria', 'required');
         $this->form_validation->set_rules('valor', 'Valor', 'required');
         $this->form_validation->set_rules('vencimento', 'Vencimento', 'required');
 
@@ -142,9 +152,12 @@ class GerenciarOperacaoContabil extends CI_Controller
         $this->load->model('OperacaoContabil');
         $operacaoContabil = $this->OperacaoContabil->getById($id);
 
-        $titulo = "{$operacaoContabil->tipo} -
+        $valor = number_format($operacaoContabil->valor, 2, ',', '.');
+
+        $titulo = "{$operacaoContabil->tipo} <br/>
+        {$operacaoContabil->categoria} -
         {$operacaoContabil->protocolo} <br/>
-        R$ {$operacaoContabil->valor} com vencimento em 
+        R$ {$valor} com vencimento em 
         {$operacaoContabil->vencimento} <br/>
         {$operacaoContabil->status}";
         $this->basicform->addLabel($titulo, 'label_long');
