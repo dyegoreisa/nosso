@@ -19,25 +19,21 @@ class MakeReport
         $this->regexData2 = '/^([12][0-9]{3})-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])$/';
     }
 
-    public function addField($name, $label, $aliasDB, $aliasOrder)
-    {
-        $this->fields[] = new Field($name, $label, $aliasDB, $aliasOrder);
+    public function getFields()
+    {  
+        return $this->fields;
     }
 
     private function getCamposBase()
     {
-        return "
-            SELECT
-                oc.id
-                , DATE_FORMAT(oc.vencimento, '%d/%m/%Y') as vencimento
-                , FORMAT(oc.valor, 2) as valor
-                , oc.protocolo
-                , toc.nome
-                , tsoc.nome as status
-        ";
+        $campos = array();
+        foreach ($this->fields as $field) {
+            $campos[] = $field->getAliasDB();
+        }
+        return implode(', ', $campos);
     }
 
-    private function getSqlBase()
+    private function getFrom()
     {
         return "
             FROM operacao_contabil oc
@@ -47,6 +43,36 @@ class MakeReport
         ";
     }
 
+    private function getOrder()
+    {
+        $ordem = array();
+        foreach ($this->fields as $field) {
+            if ($field->getAliasOrder() !== NULL) {
+                $ordem[] = $field->getAliasOrder();
+            }
+        }
+        return 'ORDER BY ' . implode(', ', $ordem);
+    }
+
+    public function getDisplayFiltros()
+    {
+        return $this->displayFiltros;
+    }
+
+    public function getTotais()
+    {
+        $totais['pago']       = $this->process('pago');
+        $totais['a_pagar']    = $this->process('a_pagar');
+        $totais['estimativa'] = $this->process('estimativa');
+
+        return $totais;
+    }
+
+    public function getContas()
+    {
+        return $this->process('contas');
+    }
+
     public function addFiltro($key, $val, $isData = FALSE)
     {
         if ($isData === TRUE) {
@@ -54,6 +80,11 @@ class MakeReport
         } else {
             $this->filtros[$key] = $val;
         }
+    }
+
+    public function addField($name, $label, $aliasDB, $aliasOrder)
+    {
+        $this->fields[] = new Field($name, $label, $aliasDB, $aliasOrder);
     }
 
     private function makeWhere()
@@ -86,21 +117,74 @@ class MakeReport
         return empty($where) ? '' : 'WHERE ' . implode(' AND ', $where);
     }
 
-    public function getDisplayFiltros()
+    private function execute($sql, $single = FALSE)
     {
-        return $this->displayFiltros;
+        $query = $this->CI->db->query($sql);
+        if ($query->num_rows() > 0) {
+            $result = $query->result();
+            if ($single === TRUE) {
+                return $result[0];
+            } else {
+                return $result;
+            }
+        } else {
+            return NULL;
+        }
     }
 
-    public function process()
+    private function process($tipoRelatorio)
     {
-        $query = $this->CI->db->query(
-            $this->getCamposBase() . 
-            $this->getSqlBase() . 
-            $this->makeWhere() . 
-            " ORDER BY oc.vencimento"
-        );
+        switch($tipoRelatorio)
+        {
+            case 'contas':
+                $sql = 'SELECT oc.id, ' . 
+                       $this->getCamposBase() . 
+                       $this->getFrom() . 
+                       $this->makeWhere() . 
+                       $this->getOrder();
 
-        return $query->result();
+                $result = $this->execute($sql);
+                $result = isset($result) ? $result : array();
+                break;
+
+            case 'pago':
+                $sql = 'SELECT sum(oc.valor) as total' . 
+                       $this->getFrom() . 
+                       $this->makeWhere() . 
+                       "AND tsoc.nome = 'Pago'";
+
+                $result = $this->execute($sql, TRUE);
+                if (!isset($result->total)) {
+                    $result->total = 0;
+                }
+                break;
+
+            case 'a_pagar':
+                $sql = 'SELECT sum(oc.valor) as total' . 
+                       $this->getFrom() . 
+                       $this->makeWhere() . 
+                       "AND tsoc.nome = 'A pagar'";
+
+                $result = $this->execute($sql, TRUE);
+                if (!isset($result->total)) {
+                    $result->total = 0;
+                }
+                break;
+
+            case 'estimativa':
+                $sql = 'SELECT sum(oc.valor) as total' . 
+                       $this->getFrom() . 
+                       $this->makeWhere() . 
+                       "AND tsoc.nome = 'Estimativa'";
+
+                $result = $this->execute($sql, TRUE);
+                if (!isset($result->total)) {
+                    $result->total = 0;
+                }
+                break;
+        }
+
+        return $result;
     }
 }
 ?>

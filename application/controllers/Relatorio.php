@@ -35,6 +35,7 @@ class Relatorio extends CI_Controller
 
     public function executar()
     {
+        $this->load->helper('html');
         $this->load->library('Report/MakeReport');
 
         // Filtros
@@ -50,15 +51,19 @@ class Relatorio extends CI_Controller
         $this->makereport->addField('valor', 'Valor', 'FORMAT(oc.valor, 2) as valor', NULL);
         $this->makereport->addField('protocolo', 'Protocolo', 'oc.protocolo', NULL);
 
-        $contas  = $this->makereport->process();
+        $contas  = $this->makereport->getContas();
 		$filtros = $this->makereport->getDisplayFiltros();
+        $campos  = $this->makereport->getFields();
+        $total   = $this->makereport->getTotais();
 
         $this->load->view('principal', array(
             'template' => 'Relatorio/resultado',
             'titulo'   => 'Relatório de contas',
             'dados'    => array(
 				'contas'  => $contas,
-				'filtros' => $filtros
+				'filtros' => $filtros,
+                'campos'  => $campos,
+                'total'   => $total
 			)
         ));
     }

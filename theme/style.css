@@ -16,12 +16,37 @@ body {
 /* Layout
    -------------------------------- */
 
-.layout-grid {
+table.layout-grid, table.layout-grid-totais {
 	width: 100%;
 }
 
-.layout-grid td {
+table.layout-grid-totais {
+    border: 1px dashed; 
+}
+
+table.layout-grid th {
+    background-color: #228B22;
+    color: #FFFFFF;
+}
+
+table.layout-grid td {
 	vertical-align: top;
+}
+
+table.layout-grid tr.par, table.layout-grid-totais tr.par{
+    background-color: #F0FFF0;
+}
+
+table.layout-grid tr.impar, table.layout-grid-totais tr.impar {
+    background-color: #FFFFFA;
+}
+
+table.layout-grid-totais th {
+    text-align: left;
+}
+
+table.layout-grid-totais td {
+    text-align: right;
 }
 
 div#menu {
