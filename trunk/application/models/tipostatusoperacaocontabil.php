@@ -7,8 +7,12 @@ class TipoStatusOperacaoContabil extends CI_Model
         parent::__construct(); 
     } 
 
-    public function listar()
+    public function listar($idTipoOperacaoContabil = NULL)
     {
+        if (isset($idTipoOperacaoContabil) && !empty($idTipoOperacaoContabil)) {
+            $this->db->where("tipo_operacao_contabil_id = '{$idTipoOperacaoContabil}'");
+        }
+
 		$this->db->order_by('nome');
         $query = $this->db->get('tipo_status_operacao_contabil');
 
@@ -49,10 +53,10 @@ class TipoStatusOperacaoContabil extends CI_Model
         $this->db->delete('tipo_status_operacao_contabil', array('id' => $id));
     }
 
-    public function getOptionsForDropdown()
+    public function getOptionsForDropdown($idTipoOperacaoContabil)
     {
         $tipos = array('' => '------');
-        $result = $this->listar();
+        $result = $this->listar($idTipoOperacaoContabil);
         foreach ($result as $tipo) {
             $tipos[$tipo->id] = $tipo->nome;
         }

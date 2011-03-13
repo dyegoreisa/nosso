@@ -38,6 +38,7 @@ class MakeReport
         return "
             FROM operacao_contabil oc
                 JOIN tipo_operacao_contabil toc ON toc.id = oc.tipo_operacao_contabil_id
+                JOIN categoria_operacao_contabil coc ON coc.id = oc.categoria_operacao_contabil_id
                 JOIN status_operacao_contabil soc ON soc.operacao_contabil_id = oc.id AND soc.data_fim IS NULL
                 JOIN tipo_status_operacao_contabil tsoc ON tsoc.id = soc.tipo_status_operacao_contabil_id
         ";
@@ -61,6 +62,7 @@ class MakeReport
 
     public function getTotais()
     {
+        $totais['recebido']   = $this->process('recebido');
         $totais['pago']       = $this->process('pago');
         $totais['a_pagar']    = $this->process('a_pagar');
         $totais['estimativa'] = $this->process('estimativa');
@@ -100,11 +102,11 @@ class MakeReport
             $this->displayFiltros[] = 'Data fim: ' . preg_replace($this->regexData2, '\3/\2/\1', $this->filtros['data_fim']);
         }
 
-        if ($this->filtros['tipo'] != 0) {
-            $where[] = "toc.id = '{$this->filtros['tipo']}'";
-			$query = $this->CI->db->get_where('tipo_operacao_contabil', array('id' => $this->filtros['tipo']));
+        if ($this->filtros['categoria'] != 0) {
+            $where[] = "coc.id = '{$this->filtros['categoria']}'";
+			$query = $this->CI->db->get_where('categoria_operacao_contabil', array('id' => $this->filtros['categoria']));
 			$tipo = $query->result();
-            $this->displayFiltros[] = 'Tipo: ' . $tipo[0]->nome;
+            $this->displayFiltros[] = 'Categoria: ' . $tipo[0]->nome;
         }
 
         if ($this->filtros['status'] != 0) {
@@ -113,6 +115,8 @@ class MakeReport
 			$status = $query->result();
             $this->displayFiltros[] = 'Status: ' . $status[0]->nome;
         }
+
+        //$where[] = "toc.nome = 'Saída'";
 
         return empty($where) ? '' : 'WHERE ' . implode(' AND ', $where);
     }
@@ -145,6 +149,18 @@ class MakeReport
 
                 $result = $this->execute($sql);
                 $result = isset($result) ? $result : array();
+                break;
+
+            case 'recebido':
+                $sql = 'SELECT sum(oc.valor) as total' . 
+                       $this->getFrom() . 
+                       $this->makeWhere() . 
+                       "AND tsoc.nome = 'Recebido'";
+
+                $result = $this->execute($sql, TRUE);
+                if (!isset($result->total)) {
+                    $result->total = 0;
+                }
                 break;
 
             case 'pago':

@@ -17,7 +17,11 @@
         <?php
         foreach ($campos as $campo) {
             $name = $campo->getName();
-            echo "<td>{$conta->$name}</td>";
+            if ($name == 'valor') {
+                echo '<td align="right">' . number_format($conta->$name, 2, ',', '.') . '</td>';
+            } else {
+                echo "<td>{$conta->$name}</td>";
+            }
         }
         ?>
     </tr>
@@ -25,6 +29,10 @@
 </table>
 <?= br(3); ?>
 <table class="layout-grid-totais">
+    <tr class="impar">
+        <th>Total Recebido:</th>
+        <td><?= number_format($total['recebido']->total, 2, ',', '.'); ?>
+    </tr>
     <tr class="par">
         <th>Total Pago:</th>
         <td><?= number_format($total['pago']->total, 2, ',', '.'); ?></td>
@@ -44,6 +52,10 @@
     <tr class="par">
         <th>Total de contas no período:</th>
         <td><?= number_format($total['pago']->total + $total['a_pagar']->total + $total['estimativa']->total, 2, ',', '.'); ?></td>
+    </tr>
+    <tr class="impar">
+        <th>Total de contas no período:</th>
+        <td><?= number_format($total['recebido']->total - ($total['pago']->total + $total['a_pagar']->total + $total['estimativa']->total), 2, ',', '.'); ?></td>
     </tr>
 </table>
 

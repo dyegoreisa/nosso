@@ -56,5 +56,12 @@ class TipoOperacaoContabil extends CI_Model
         }
         return $tipos;
     }
+
+    public function getIdByName($nome)
+    {
+        $query = $this->db->get_where('tipo_operacao_contabil', array('nome' => $nome));
+        $tipo_operacao_contabil = $query->result();
+        return $tipo_operacao_contabil[0]->id;
+    }
 }
 ?>

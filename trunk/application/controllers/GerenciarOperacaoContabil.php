@@ -60,6 +60,10 @@ class GerenciarOperacaoContabil extends CI_Controller
         $this->basicform->addInput('Vencimento: ', 'vencimento', 'vencimento', 'data', isset($operacaoContabil) ? $operacaoContabil->vencimento : NULL);
         $this->basicform->addInput('Protocolo: ', 'protocolo', 'protocolo', '', isset($operacaoContabil) ? $operacaoContabil->protocolo : NULL);
 
+        if(!isset($id) || empty($id)) {
+            $this->basicform->addCheckbox('Estimativa: ', 'estimativa', 'estimativa', 1, '');
+        }
+
         $this->load->view('principal', array(
             'template' => 'form',
             'titulo'   => $titulo,
@@ -88,7 +92,22 @@ class GerenciarOperacaoContabil extends CI_Controller
             if (isset($_POST['id'])) {
                 $this->OperacaoContabil->atualizar($_POST);
             } else {
-                $this->OperacaoContabil->inserir($_POST);
+                $this->load->model('TipoOperacaoContabil');
+                $this->load->model('TipoStatusOperacaoContabil');
+
+                if ($_POST['tipo_operacao_contabil_id'] === $this->TipoOperacaoContabil->getIdByName('Saída')) {
+                    if (isset($_POST['estimativa']) && $_POST['estimativa'] == 1) {
+                        $status = 'Estimativa';
+                        unset($_POST['estimativa']);
+                    } else {
+                        $status = 'A pagar';
+                    }
+                } else {
+                    $status = 'A receber';
+                }
+
+                $idTipoStatusOperacaoContabil = $this->TipoStatusOperacaoContabil->getIdByName($status);
+                $this->OperacaoContabil->inserir($_POST, $idTipoStatusOperacaoContabil);
             }
             $this->listar();
         }
@@ -141,13 +160,13 @@ class GerenciarOperacaoContabil extends CI_Controller
         $this->listar();
     }
 
-    public function selecionarStatus($id)
+    public function selecionarStatus($id, $idTipo)
     {
         $this->load->helper('form');
         $this->load->library('BasicForm');
 
         $this->load->model('TipoStatusOperacaoContabil');
-        $statusOperacoes = $this->TipoStatusOperacaoContabil->getOptionsForDropdown();
+        $statusOperacoes = $this->TipoStatusOperacaoContabil->getOptionsForDropdown($idTipo);
 
         $this->load->model('OperacaoContabil');
         $operacaoContabil = $this->OperacaoContabil->getById($id);
