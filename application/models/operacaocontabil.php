@@ -35,7 +35,7 @@ class OperacaoContabil extends CI_Model
         return $query->result();
     }
 
-    public function inserir(array $dados)
+    public function inserir(array $dados, $idStatus)
     {
         $dados['vencimento'] = preg_replace($this->regexData, '\3-\2-\1', $dados['vencimento']);
 
@@ -43,7 +43,7 @@ class OperacaoContabil extends CI_Model
         $id = $this->db->insert_id();
         $this->db->insert('status_operacao_contabil', array(
             'operacao_contabil_id'             => $id,
-            'tipo_status_operacao_contabil_id' => 1, // A pagar
+            'tipo_status_operacao_contabil_id' => $idStatus,
             'data_inicio'					   => date('Y-m-d H:i:s')
         ));
     }

@@ -12,15 +12,15 @@ class Relatorio extends CI_Controller
         $this->load->helper('form');
         $this->load->library('BasicForm');
 
-        $this->load->model('TipoOperacaoContabil');
-        $tipoOperacoes = $this->TipoOperacaoContabil->getOptionsForDropdown();
+        $this->load->model('CategoriaOperacaoContabil');
+        $categoriaOperacoes = $this->CategoriaOperacaoContabil->getOptionsForDropdown();
 
         $this->load->model('TipoStatusOperacaoContabil');
-        $statusOperacoes = $this->TipoStatusOperacaoContabil->getOptionsForDropdown();
+        $statusOperacoes = $this->TipoStatusOperacaoContabil->getOptionsForDropdown(NULL);
 
         $this->basicform->addInput('Data Incial: ', 'data_inicio', 'data_inicio', 'data', '');
         $this->basicform->addInput('Data Final: ', 'data_fim', 'data_fim', 'data', '');
-        $this->basicform->addDropdown('Tipo: ', 'tipo', 'tipo', '', $tipoOperacoes);
+        $this->basicform->addDropdown('Categoria: ', 'categoria', 'categoria', '', $categoriaOperacoes);
         $this->basicform->addDropdown('Status: ', 'status', 'status', '', $statusOperacoes);
 
         $this->load->view('principal', array(
@@ -41,14 +41,15 @@ class Relatorio extends CI_Controller
         // Filtros
         $this->makereport->addFiltro('data_inicio', $this->input->post('data_inicio'), TRUE);
         $this->makereport->addFiltro('data_fim', $this->input->post('data_fim'), TRUE);
-        $this->makereport->addFiltro('tipo', $this->input->post('tipo'));
+        $this->makereport->addFiltro('categoria', $this->input->post('categoria'));
         $this->makereport->addFiltro('status', $this->input->post('status'));
 
         // Campos
-        $this->makereport->addField('status', 'Status', 'tsoc.nome as status', 'status');
         $this->makereport->addField('tipo', 'Tipo', 'toc.nome as tipo', 'tipo');
+        $this->makereport->addField('status', 'Status', 'tsoc.nome as status', 'status');
+        $this->makereport->addField('categoria', 'Categoria', 'coc.nome as categoria', 'categoria');
         $this->makereport->addField('vencimento', 'Vencimento', "DATE_FORMAT(oc.vencimento, '%d/%m/%Y') as vencimento", 'vencimento');
-        $this->makereport->addField('valor', 'Valor', 'FORMAT(oc.valor, 2) as valor', NULL);
+        $this->makereport->addField('valor', 'Valor', 'oc.valor', NULL);
         $this->makereport->addField('protocolo', 'Protocolo', 'oc.protocolo', NULL);
 
         $contas  = $this->makereport->getContas();

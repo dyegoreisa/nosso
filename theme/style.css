@@ -49,6 +49,10 @@ table.layout-grid-totais td {
     text-align: right;
 }
 
+table.layout-grid tr:hover, table.layout-grid-totais tr:hover {
+    background-color: #98FB98;
+}
+
 div#menu {
 	
 }

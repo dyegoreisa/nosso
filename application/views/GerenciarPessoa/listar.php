@@ -1,12 +1,12 @@
-<table border="1" class="layout-grid">
+<table class="layout-grid">
     <tr>
         <th>Nome</th>
         <th>Sobrenome</th>
         <th>Sexo</th>
         <th>A&ccedil;&otilde;es</th>
     </tr>
-<?php foreach ($pessoas as $pessoa): ?>
-    <tr>
+<?php foreach ($pessoas as $key => $pessoa): ?>
+    <tr class ="<?= ($key % 2) ? 'impar' : 'par'; ?>">
         <td><?= $pessoa->nome; ?></td>
         <td><?= $pessoa->sobrenome; ?></td>
         <td><?= $pessoa->sexo; ?></td>
