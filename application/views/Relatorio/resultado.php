@@ -54,7 +54,7 @@
         <td><?= number_format($total['pago']->total + $total['a_pagar']->total + $total['estimativa']->total, 2, ',', '.'); ?></td>
     </tr>
     <tr class="impar">
-        <th>Total de contas no período:</th>
+        <th>(Total A pagar + Total Estimado) - Total recebido:</th>
         <td><?= number_format($total['recebido']->total - ($total['pago']->total + $total['a_pagar']->total + $total['estimativa']->total), 2, ',', '.'); ?></td>
     </tr>
 </table>
