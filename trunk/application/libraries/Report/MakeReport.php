@@ -152,7 +152,7 @@ class MakeReport
                 break;
 
             case 'recebido':
-                $sql = 'SELECT sum(oc.valor) as total' . 
+                $sql = 'SELECT sum(soc.valor) as total' . 
                        $this->getFrom() . 
                        $this->makeWhere() . 
                        "AND tsoc.nome = 'Recebido'";
@@ -164,7 +164,7 @@ class MakeReport
                 break;
 
             case 'pago':
-                $sql = 'SELECT sum(oc.valor) as total' . 
+                $sql = 'SELECT sum(soc.valor) as total' . 
                        $this->getFrom() . 
                        $this->makeWhere() . 
                        "AND tsoc.nome = 'Pago'";
@@ -176,7 +176,7 @@ class MakeReport
                 break;
 
             case 'a_pagar':
-                $sql = 'SELECT sum(oc.valor) as total' . 
+                $sql = 'SELECT sum(soc.valor) as total' . 
                        $this->getFrom() . 
                        $this->makeWhere() . 
                        "AND tsoc.nome = 'A pagar'";
@@ -188,7 +188,7 @@ class MakeReport
                 break;
 
             case 'estimativa':
-                $sql = 'SELECT sum(oc.valor) as total' . 
+                $sql = 'SELECT sum(soc.valor) as total' . 
                        $this->getFrom() . 
                        $this->makeWhere() . 
                        "AND tsoc.nome = 'Estimativa'";

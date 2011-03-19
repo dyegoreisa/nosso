@@ -37,6 +37,11 @@ class BasicForm
         $this->itens[] = new ItemForm($label, $name, $id, $value, '', $checked, 'checkbox');
     }
 
+    public function addHidden($name, $value)
+    {
+        $this->itens[] = new ItemForm('', $name, '', $value, '', '', 'hidden');
+    }
+
     public function getItens()
     {
         return $this->itens;

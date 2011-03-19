@@ -88,12 +88,12 @@ class GerenciarOperacaoContabil extends CI_Controller
             $this->editar();
         } else {
             $this->load->model('OperacaoContabil');
+            $this->load->model('TipoStatusOperacaoContabil');
 
             if (isset($_POST['id'])) {
                 $this->OperacaoContabil->atualizar($_POST);
             } else {
                 $this->load->model('TipoOperacaoContabil');
-                $this->load->model('TipoStatusOperacaoContabil');
 
                 if ($_POST['tipo_operacao_contabil_id'] === $this->TipoOperacaoContabil->getIdByName('Saída')) {
                     if (isset($_POST['estimativa']) && $_POST['estimativa'] == 1) {
@@ -135,6 +135,7 @@ class GerenciarOperacaoContabil extends CI_Controller
     {
         $this->load->helper('form');
         $this->load->library('BasicForm');
+
         $this->basicform->addInput('', 'dado', 'dado', 'data', '');
         $this->load->view('principal', array(
             'template' => 'form',
@@ -181,7 +182,8 @@ class GerenciarOperacaoContabil extends CI_Controller
         {$operacaoContabil->status}";
         $this->basicform->addLabel($titulo, 'label_long');
         $this->basicform->addDropdown('Status: ', 'status', 'status', '', $statusOperacoes);
-
+        $this->basicform->addInput('Valor: ', 'valor', 'valor', '', $operacaoContabil->valor);
+        $this->basicform->addHidden('id_tipo', $idTipo);
 
         $this->load->view('principal', array(
             'template' => 'form',
@@ -196,13 +198,22 @@ class GerenciarOperacaoContabil extends CI_Controller
 
     public function alterarStatus()
     {
-        $id     = $this->input->post('id'); 
-        $idStatus = $this->input->post('status');
+        $this->load->library('form_validation');
 
-        $this->load->model('StatusOperacaoContabil');
-        $this->StatusOperacaoContabil->alterarStatus($id, $idStatus);
+        $this->form_validation->set_rules('status', 'Status', 'required');
 
-        $this->listar();
+        if ($this->form_validation->run() === FALSE) {
+            $this->selecionarStatus($this->input->post('id'), $this->input->post('id_tipo'));
+        } else {
+            $id       = $this->input->post('id'); 
+            $idStatus = $this->input->post('status');
+            $valor    = $this->input->post('valor');
+
+            $this->load->model('StatusOperacaoContabil');
+            $this->StatusOperacaoContabil->alterarStatus($id, $idStatus, $valor);
+
+            $this->listar();
+        }
     }
 }
 ?>

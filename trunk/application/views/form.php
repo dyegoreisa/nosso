@@ -56,6 +56,12 @@ foreach ($this->basicform->getItens() as $item) {
             echo form_label($item->getLabel(), $item->getId());
             echo form_checkbox($item->getName(), $item->getValue());
             break;
+
+        case 'hidden':
+            $valor = set_value($item->getName());
+            $valor = empty($valor) ? $item->getValue() : $valor;
+            echo form_hidden($item->getName(), $valor);
+            break;
     }
     echo '<br/>';
 }

@@ -50,7 +50,7 @@ class StatusOperacaoContabil extends CI_Model
         $this->db->delete('status_operacao_contabil', array('id' => $id));
     }
 
-    public function alterarStatus($id, $idStatus)
+    public function alterarStatus($id, $idStatus, $valor)
     {
         $agora = date('Y-m-d H:i:s');
          
@@ -63,6 +63,7 @@ class StatusOperacaoContabil extends CI_Model
         $this->db->insert('status_operacao_contabil', array(
             'operacao_contabil_id'             => $id,
             'tipo_status_operacao_contabil_id' => $idStatus,
+            'valor'                            => $valor,
             'data_inicio'					   => $agora
         ));
 

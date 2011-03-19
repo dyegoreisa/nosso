@@ -15,8 +15,8 @@ class OperacaoContabil extends CI_Model
                 , oc.tipo_operacao_contabil_id
                 , oc.categoria_operacao_contabil_id
                 , DATE_FORMAT(oc.vencimento, '%d/%m/%Y') as vencimento
-                , oc.valor
                 , oc.protocolo
+                , soc.valor
                 , toc.nome as tipo
                 , coc.nome as categoria
                 , tsoc.nome as status
@@ -39,22 +39,42 @@ class OperacaoContabil extends CI_Model
     {
         $dados['vencimento'] = preg_replace($this->regexData, '\3-\2-\1', $dados['vencimento']);
 
+        $valor = $dados['valor'];
+        unset($dados['valor']);
+
+        $this->db->trans_start();
+
         $this->db->insert('operacao_contabil', $dados);
         $id = $this->db->insert_id();
         $this->db->insert('status_operacao_contabil', array(
             'operacao_contabil_id'             => $id,
             'tipo_status_operacao_contabil_id' => $idStatus,
+            'valor'                            => $valor,
             'data_inicio'					   => date('Y-m-d H:i:s')
         ));
+
+        $this->db->trans_complete();
     }
 
     public function atualizar(array $dados)
     {
         $id = $dados['id'];
         unset($dados['id']);
+
+        $valor = $dados['valor'];
+        unset($dados['valor']);
+
+        $this->db->trans_start();
+
         $dados['vencimento'] = preg_replace($this->regexData, '\3-\2-\1', $dados['vencimento']);
         $this->db->where('id', $id);
         $this->db->update('operacao_contabil', $dados);
+
+        $this->db->where('operacao_contabil_id', $id);
+        $this->db->where('data_fim', NULL);
+        $this->db->update('status_operacao_contabil', array('valor' => $valor));
+
+        $this->db->trans_complete();
     }
 
     public function getById($id)

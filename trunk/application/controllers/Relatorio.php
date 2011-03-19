@@ -20,8 +20,8 @@ class Relatorio extends CI_Controller
 
         $this->basicform->addInput('Data Incial: ', 'data_inicio', 'data_inicio', 'data', '');
         $this->basicform->addInput('Data Final: ', 'data_fim', 'data_fim', 'data', '');
-        $this->basicform->addDropdown('Categoria: ', 'categoria', 'categoria', '', $categoriaOperacoes);
-        $this->basicform->addDropdown('Status: ', 'status', 'status', '', $statusOperacoes);
+        //$this->basicform->addDropdown('Categoria: ', 'categoria', 'categoria', '', $categoriaOperacoes);
+        //$this->basicform->addDropdown('Status: ', 'status', 'status', '', $statusOperacoes);
 
         $this->load->view('principal', array(
             'template' => 'form',
@@ -49,7 +49,7 @@ class Relatorio extends CI_Controller
         $this->makereport->addField('status', 'Status', 'tsoc.nome as status', 'status');
         $this->makereport->addField('categoria', 'Categoria', 'coc.nome as categoria', 'categoria');
         $this->makereport->addField('vencimento', 'Vencimento', "DATE_FORMAT(oc.vencimento, '%d/%m/%Y') as vencimento", 'vencimento');
-        $this->makereport->addField('valor', 'Valor', 'oc.valor', NULL);
+        $this->makereport->addField('valor', 'Valor', 'soc.valor', NULL);
         $this->makereport->addField('protocolo', 'Protocolo', 'oc.protocolo', NULL);
 
         $contas  = $this->makereport->getContas();
