@@ -28,9 +28,15 @@ class OperacaoContabil extends CI_Model
         ";
     }
 	
-    public function listar()
+    public function listar($campo = NULL, $ordem = NULL)
     {
-        $query = $this->db->query($this->sqlBase . ' ORDER BY toc.nome');
+        if (isset($campo)) {
+            $ordenacao = " ORDER BY {$campo} {$ordem}";
+        } else {
+            $ordenacao = ' ORDER BY tipo, categoria';
+        }
+
+        $query = $this->db->query($this->sqlBase . $ordenacao);
 
         return $query->result();
     }
@@ -96,7 +102,6 @@ class OperacaoContabil extends CI_Model
 
         $query = $this->db->query($this->sqlBase . '
             WHERE oc.vencimento = ?
-                OR oc.valor = ?
                 OR oc.protocolo like ?
                 OR coc.nome like ?
                 OR toc.nome like ?

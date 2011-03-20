@@ -7,9 +7,14 @@ class Pessoa extends CI_Model
         parent::__construct(); 
     }
 
-    public function listar()
+    public function listar($campo = NULL, $ordem = NULL)
     {
-		$this->db->order_by('nome');
+        if (isset($campo)) {
+            $this->db->order_by($campo, $ordem);
+        } else {
+            $this->db->order_by('nome');
+        }
+
         $query = $this->db->get('pessoa');
 
         return $query->result();

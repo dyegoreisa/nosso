@@ -2,6 +2,8 @@
 
 class GerenciarPessoa extends CI_Controller
 {
+    private $pessoas;
+    
     public function __construct()
     {
         parent::__construct();
@@ -81,18 +83,28 @@ class GerenciarPessoa extends CI_Controller
 
     }
 
-    public function listar($pessoas = NULL, $dado = '')
+    public function listar($campo = NULL, $ordem = NULL)
     {
         $this->load->model('Pessoa');
+        $this->load->library('Titulos');
 
-        if (!isset($pessoas)) {
-            $pessoas = $this->Pessoa->listar();
+        $this->titulos->addItem('Nome', '/GerenciarPessoa/listar', 'nome', 'ASC', 'none');
+        $this->titulos->addItem('Sobrenome', '/GerenciarPessoa/listar', 'sobrenome', 'ASC', 'none');
+        $this->titulos->addItem('Sexo', '/GerenciarPessoa/listar', 'sexo', 'ASC', 'none');
+        $this->titulos->addItem('A&ccedil;&otilde;es');
+
+        if (isset($campo) && isset($ordem)) {
+            $this->titulos->change($campo, $ordem);
+        }
+
+        if (!isset($this->pessoas)) {
+            $pessoas = $this->Pessoa->listar($campo, $ordem);
         }
 
         $this->load->view('principal', array(
             'template' => 'GerenciarPessoa/listar',
             'titulo'   => 'Lista pessoas',
-            'dados'       => array(
+            'dados'    => array(
                 'pessoas' => $pessoas
             )
         ));
@@ -117,7 +129,8 @@ class GerenciarPessoa extends CI_Controller
     {
         $this->load->model('Pessoa');
         $pessoas = $this->Pessoa->buscar($this->input->post('dado'));
-        $this->listar($pessoas, $this->input->post('dado'));
+        $this->pessoas = $pessoas;
+        $this->listar();
     }
 
     public function excluir($id)
