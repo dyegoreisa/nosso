@@ -13,11 +13,13 @@ class ItemMenu
 		$this->excluir = $excluir;
     }
 
-    public function getLabel() {
+    public function getLabel() 
+    {
         return $this->label;
     }
 
-    public function getLink() {
+    public function getLink() 
+    {
         return $this->link;
     }
 

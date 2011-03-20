@@ -2,6 +2,8 @@
 
 class GerenciarOperacaoContabil extends CI_Controller
 {
+    private $operacoes;
+
     public function __construct()
     {
         parent::__construct();
@@ -114,12 +116,27 @@ class GerenciarOperacaoContabil extends CI_Controller
 
     }
 
-    public function listar($operacoes = NULL, $dado = '')
+    public function listar($campo = NULL, $ordem = NULL)
     {
         $this->load->model('OperacaoContabil');
+        $this->load->library('Titulos');
 
-        if (!isset($operacoes)) {
-            $operacoes = $this->OperacaoContabil->listar();
+        $this->titulos->addItem('Tipo', '/GerenciarOperacaoContabil/listar', 'tipo', 'ASC', 'none');
+        $this->titulos->addItem('Categoria', '/GerenciarOperacaoContabil/listar', 'categoria', 'ASC', 'none');
+        $this->titulos->addItem('Valor', '/GerenciarOperacaoContabil/listar', 'valor', 'ASC', 'none');
+        $this->titulos->addItem('Vencimento', '/GerenciarOperacaoContabil/listar', 'vencimento', 'ASC', 'none');
+        $this->titulos->addItem('Protocolo', '/GerenciarOperacaoContabil/listar', 'protocolo', 'ASC', 'none');
+        $this->titulos->addItem('Status', '/GerenciarOperacaoContabil/listar', 'status', 'ASC', 'none');
+        $this->titulos->addItem('A&ccedil;&otilde;es');
+
+        if (isset($campo) && isset($ordem)) {
+            $this->titulos->change($campo, $ordem);
+        }
+
+        if (!isset($this->operacoes)) {
+            $operacoes = $this->OperacaoContabil->listar($campo, $ordem);
+        } else {
+            $operacoes = $this->operacoes;
         }
 
         $this->load->view('principal', array(
@@ -151,7 +168,8 @@ class GerenciarOperacaoContabil extends CI_Controller
     {
         $this->load->model('OperacaoContabil');
         $operacoes = $this->OperacaoContabil->buscar($this->input->post('dado'));
-        $this->listar($operacoes, $this->input->post('dado'));
+        $this->operacoes = $operacoes;
+        $this->listar();
     }
 
     public function excluir($id)

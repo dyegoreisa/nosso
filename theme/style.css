@@ -30,7 +30,7 @@ table.layout-grid th {
 }
 
 table.layout-grid td {
-	vertical-align: top;
+	vertical-align: middle;
 }
 
 table.layout-grid tr.par, table.layout-grid-totais tr.par{
@@ -58,8 +58,6 @@ div#menu {
 }
 
 div#main {
-/*	position: absolute;*/
-/*	top: 80px;*/
 	width: 700px;
 }
 
@@ -104,4 +102,11 @@ div.label_long {
 
 .normal p {
 	font-size: 1.2em;
+}
+
+/* Comportamento */
+
+.order {
+   color: white;
+   text-decoration: none;
 }
