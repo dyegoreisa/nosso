@@ -19,9 +19,9 @@ class ItemForm
         $this->id      = $id;
         $this->value   = $value;
         $this->class   = $class;
-        if (!empty($checked) && $checked == $this->value) {
-            $this->checked = TRUE;
-        }
+        $this->checked = (!empty($checked) && $checked == $this->value) ? 
+            $this->checked = TRUE:
+            $this->checked = FALSE;
         $this->type    = $type;
     }
 
@@ -78,7 +78,7 @@ class ItemForm
 
     public function isChecked()
     {
-        return isset($this->checked) ? TRUE : FALSE;
+        return $this->checked;
     }
 }
 ?>
