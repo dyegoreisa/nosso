@@ -50,7 +50,7 @@ class GerenciarOperacaoContabil extends CI_Controller
 
         $formRadio = $this->basicform->addRadio('Tipo: ', 'tipo_operacao_contabil_id', 'tipo_operacao_contabil_id');
         foreach ($tipoOpcoes as $opcao) {
-            $formRadio->addItem($opcao->nome, 'tipo_operacao_contabil_id', $opcao->nome.$opcao->id, $opcao->id, isset($operacaoContabil) ? $operacaoContabil->tipo_operacao_contabil_id : NULL);
+            $formRadio->addItem($opcao->nome, 'tipo_operacao_contabil_id', $opcao->nome.$opcao->id, $opcao->id, '', isset($operacaoContabil) ? $operacaoContabil->tipo_operacao_contabil_id : NULL);
         }
 
         $this->basicform->addDropdown('Categoria: ', 'categoria_operacao_contabil_id', 'categoria_operacao_contabil_id',
