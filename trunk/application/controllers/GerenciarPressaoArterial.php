@@ -66,10 +66,10 @@ class GerenciarPressaoArterial extends CI_Controller
         $this->basicform->addDropdown('Pessoa: ', 'pessoa_id', 'pessoa_id', isset($pressaoArterial) ? $pressaoArterial->pessoa_id: NULL, $pessoas);
         $this->basicform->addInput('Data: ', 'data', 'data', 'data', isset($pressaoArterial) ? $pressaoArterial->data: date('d/m/Y'));
         $this->basicform->addInput('Hora: ', 'hora', 'hora', '', isset($pressaoArterial) ? $pressaoArterial->hora: date('H:i:s'));
-        $this->basicform->addInput('Sistólica: ', 'sistolica', 'sistolica', '', isset($pressaoArterial) ? $pressaoArterial->sistolica : NULL);
-        $this->basicform->addInput('Diastólica: ', 'diastolica', 'diastolica', '', isset($pressaoArterial) ? $pressaoArterial->diastolica : NULL);
+        $this->basicform->addInput('Sistólica (máxima): ', 'sistolica', 'sistolica', '', isset($pressaoArterial) ? $pressaoArterial->sistolica : NULL);
+        $this->basicform->addInput('Diastólica (mínima): ', 'diastolica', 'diastolica', '', isset($pressaoArterial) ? $pressaoArterial->diastolica : NULL);
         $this->basicform->addDropdown('Posição: ', 'posicao', 'posicao', isset($pressaoArterial) ? $pressaoArterial->posicao : NULL, $posicoes);
-        $this->basicform->addInput('Em Atividade? ', 'em_atividade', 'em_atividade', '', isset($pressaoArterial) ? $pressaoArterial->em_atividade : NULL);
+        $this->basicform->addCheckbox('Em Atividade? ', 'em_atividade', 'em_atividade', '1', isset($pressaoArterial) ? $pressaoArterial->em_atividade : NULL);
 
         $this->load->view('principal', array(
             'template' => 'form',
@@ -99,6 +99,7 @@ class GerenciarPressaoArterial extends CI_Controller
             $this->load->model('PressaoArterial');
 
             if (isset($_POST['id'])) {
+                $_POST['em_atividade'] = isset($_POST['em_atividade']) ? 1 : 0;
                 $id = $this->PressaoArterial->atualizar($_POST);
             } else {
                 $id = $this->PressaoArterial->inserir($_POST);
