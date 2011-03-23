@@ -1,6 +1,6 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-class Medida extends CI_Model
+class PressaoArterial extends CI_Model
 { 
     private $regexData;
     private $columns;
@@ -10,10 +10,13 @@ class Medida extends CI_Model
         parent::__construct(); 
         $this->regexData = '/^(0[1-9]|[12][0-9]|3[01])\/(0[1-9]|1[012])\/([12][0-9]{3})$/';
         $this->columns = "
-            m.id
-            , DATE_FORMAT(m.data,'%d/%m/%Y') as data
-            , m.altura
-            , m.peso
+            pa.id
+            , DATE_FORMAT(pa.data, '%d/%m/%Y') as data
+            , pa.hora
+            , pa.sistolica
+            , pa.diastolica
+            , pa.posicao
+            , pa.em_atividade
             , p.nome
         ";
     }
@@ -26,7 +29,7 @@ class Medida extends CI_Model
             $this->db->order_by('data');
         }
 
-        $this->db->select($this->columns, FALSE)->from('medida m')->join('pessoa p', 'm.pessoa_id = p.id');
+        $this->db->select($this->columns, FALSE)->from('pressao_arterial pa')->join('pessoa p', 'pa.pessoa_id = p.id');
         $query = $this->db->get();
 
         return $query->result();
@@ -35,7 +38,7 @@ class Medida extends CI_Model
     public function inserir(array $dados)
     {
         $dados['data'] = preg_replace($this->regexData, '\3-\2-\1', $dados['data']);
-        $this->db->insert('medida', $dados);
+        $this->db->insert('pressao_arterial', $dados);
 
         return $this->db->insert_id();
     }
@@ -46,32 +49,31 @@ class Medida extends CI_Model
         unset($dados['id']);
         $dados['data'] = preg_replace($this->regexData, '\3-\2-\1', $dados['data']);
         $this->db->where('id', $id);
-        $this->db->update('medida', $dados);
+        $this->db->update('pressao_arterial', $dados);
         
         return $id;
     }
 
     public function getById($id)
     {
-        $query = $this->db->get_where('medida', array('id' => $id));
-        $medida = $query->result();
-        return $medida[0];
+        $query = $this->db->get_where('pressao_arterial', array('id' => $id));
+        $pressao_arterial = $query->result();
+        return $pressao_arterial[0];
     }
 
     public function buscar($dado)
     {
         if (is_numeric($dado)) {
-            $this->db->where('m.id', $dado);
+            $this->db->where('pa.id', $dado);
         } else {
             $this->db->or_like(array(
-                'p.nome'   => $dado,
-                'm.data'   => preg_replace($this->regexData, '\3-\2-\1', $dado),
-                'm.altura' => $dado,
-                'm.peso'   => $dado
+                'p.nome'  => $dado,
+                'pa.data' => preg_replace($this->regexData, '\3-\2-\1', $dado),
+                'pa.hora' => $dado
             ));
         }
 
-        $this->db->select($this->columns, FALSE)->from('medida m')->join('pessoa p', 'm.pessoa_id = p.id');
+        $this->db->select($this->columns, FALSE)->from('pressao_arterial pa')->join('pessoa p', 'pa.pessoa_id = p.id');
         $query = $this->db->get();
 
         return $query->result();
@@ -79,7 +81,7 @@ class Medida extends CI_Model
 
     public function excluir($id)
     {
-        $this->db->delete('medida', array('id' => $id));
+        $this->db->delete('pressao_arterial', array('id' => $id));
     }
 }
 ?>

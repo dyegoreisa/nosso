@@ -21,4 +21,17 @@
 			</item>
 		</submenu>
 	</item>
+    <item>
+        <label>Saúde</label>
+		<submenu>
+			<item>
+				<label>Medida</label>
+				<link>/GerenciarMedida</link>
+			</item>
+			<item>
+				<label>Pressão Arterial</label>
+				<link>/GerenciarPressaoArterial</link>
+			</item>
+		</submenu>
+    </item>
 </menu>

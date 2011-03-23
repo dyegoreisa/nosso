@@ -55,5 +55,15 @@ class Pessoa extends CI_Model
     {
         $this->db->delete('pessoa', array('id' => $id));
     }
+
+    public function getOptionsForDropdown()
+    {
+        $pessoas = array('' => '------');
+        $result = $this->listar();
+        foreach ($result as $pessoa) {
+            $pessoas[$pessoa->id] = $pessoa->nome;
+        }
+        return $pessoas;
+    }
 }
 ?>
