@@ -8,7 +8,7 @@
         <td nowrap align="right"><?= $pressaoArterial->sistolica; ?></td>
         <td nowrap align="right"><?= $pressaoArterial->diastolica; ?></td>
         <td nowrap><?= $pressaoArterial->posicao; ?></td>
-        <td><?= $pressaoArterial->em_atividade === 1 ? 'Sim' : 'Não'; ?></td>
+        <td><?= $pressaoArterial->em_atividade; ?><?= ($pressaoArterial->em_atividade == 1) ? 'Sim' : 'Não'; ?></td>
         <td nowrap><?= $this->acoes->render($pressaoArterial->id, $pressaoArterial->nome); ?></td>
     </tr>
 <?php endforeach; ?>
