@@ -83,5 +83,39 @@ class PressaoArterial extends CI_Model
     {
         $this->db->delete('pressao_arterial', array('id' => $id));
     }
+
+    public function grafico($pessoaId, $dataInicio, $dataFim, $tipoDado)
+    {   
+        $this->db->select($this->columns, FALSE)
+                 ->from('pressao_arterial pa')
+                 ->join('pessoa p', 'pa.pessoa_id = p.id')
+                 ->where('p.id', $pessoaId)
+                 ->where("pa.data >= '{$dataInicio}'")
+                 ->where("pa.data <= '{$dataFim}'")
+                 ->order_by('data');
+
+        $query = $this->db->get();
+
+        $result = $query->result();
+
+        switch($tipoDado)
+        {
+            case 'pa':
+                return $this->listaPA($result);
+                break;
+        }
+    }
+
+    private function listaPA($dados)
+    {
+        $array = array();
+        foreach ($dados as $key => $dado) {
+            $array['sistolica'][$key] = (float)$dado->sistolica;
+            $array['diastolica'][$key] = (float)$dado->diastolica;
+            $array['data'][$key] = $dado->data;
+        }
+
+        return $array;
+    }
 }
 ?>

@@ -20,17 +20,7 @@ class GerenciarPressaoArterial extends CI_Controller
 
     public function index()
     {
-        $this->grafico();
-    }
-
-    public function grafico()
-    {
-        $titulo = 'Gráfico';
-
-        $this->load->view('principal', array(
-            'template' => '/GerenciarPressaoArterial/grafico',
-            'titulo'   => $titulo,
-        ));
+        $this->filtroGrafico();
     }
 
     public function editar($id = NULL)
@@ -174,6 +164,118 @@ class GerenciarPressaoArterial extends CI_Controller
         $this->load->model('PressaoArterial');
         $this->PressaoArterial->excluir($id);
         $this->buscar();
+    }
+
+    public function filtroGrafico()
+    {
+        $this->load->helper('form');
+        $this->load->library('BasicForm');
+
+        $this->load->model('Pessoa');
+        $pessoas = $this->Pessoa->getOptionsForDropdown();
+
+        $this->basicform->addDropdown('Pessoa: ', 'pessoa_id', 'pessoa_id', isset($medida) ? $medida->pessoa_id: NULL, $pessoas);
+        $this->basicform->addInput('Data inicio: ', 'data_inicio', 'data_inicio', 'data', isset($medida) ? $medida->data: NULL);
+        $this->basicform->addInput('Data fim: ', 'data_fim', 'data_fim', 'data', isset($medida) ? $medida->data: NULL);
+
+        $this->load->view('principal', array(
+            'template' => 'form',
+            'titulo'   => 'Gerar gráfico',
+            'dados'    => array(
+                'action' => '/GerenciarPressaoArterial/grafico',
+                'submit' => 'Gerar',
+            )
+        ));
+    }
+
+    public function grafico()
+    {
+        $regexData = '/^(0[1-9]|[12][0-9]|3[01])\/(0[1-9]|1[012])\/([12][0-9]{3})$/';
+        preg_replace($regexData, '\3-\2-\1', $this->input->post('data_inicio'));
+        $this->load->library('form_validation');
+
+        $this->form_validation->set_rules('pessoa_id', 'Pessoa', 'required');
+        $this->form_validation->set_rules('data_inicio', 'Data inicio', 'required');
+        $this->form_validation->set_rules('data_fim', 'Data fim', 'required');
+
+        if ($this->form_validation->run() === FALSE) {
+            $this->filtroGrafico();
+        } else {
+
+            $this->load->view('principal', array(
+                'template' => '/GerenciarPressaoArterial/grafico',
+                'titulo'   => 'Gráfico',
+                'dados'    => array(
+                    'pessoa_id'   => $this->input->post('pessoa_id'),
+                    'data_inicio' => preg_replace($regexData, '\3-\2-\1', $this->input->post('data_inicio')),
+                    'data_fim'    => preg_replace($regexData, '\3-\2-\1', $this->input->post('data_fim'))
+                )
+            ));
+        }
+    }
+
+    public function dataJson($pessoaId, $dataInicio, $dataFim)
+    {
+        include 'api/ofc/php-ofc-library/open-flash-chart.php';
+
+        $regexData = '/^([12][0-9]{3})-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])$/';
+
+        $this->load->model('PressaoArterial');
+        $pa = $this->PressaoArterial->grafico($pessoaId, $dataInicio, $dataFim, 'pa');
+
+        $this->load->model('Pessoa');
+        $pessoa = $this->Pessoa->getById($pessoaId);
+
+        $chart = new open_flash_chart();
+
+        $dataInicioF = preg_replace($regexData, '\3/\2/\1', $dataInicio);
+        $dataFimF    = preg_replace($regexData, '\3/\2/\1', $dataFim);
+        $title = new title( "MRPA de {$pessoa->nome} - {$dataInicioF} e {$dataFimF}" );
+        $title->set_style( "{font-size: 20px; color: #A2ACBA; text-align: center;}" );
+        $chart->set_title( $title );
+
+        $area1 = new area();
+        $area1->set_colour( '#5B56B6' );
+        $area1->set_values( $pa['sistolica'] );
+        $area1->set_key( 'Sistólica', 12 );
+        $chart->add_element( $area1 );
+
+        $area2 = new area();
+        $area2->set_colour( '#5B5600' );
+        $area2->set_values( $pa['diastolica'] );
+        $area2->set_key( 'Diastólica', 12 );
+        $chart->add_element( $area2 );
+
+        $x_labels = new x_axis_labels();
+        $x_labels->set_steps( 1 );
+        $x_labels->set_vertical();
+        $x_labels->set_colour( '#A2ACBA' );
+        $x_labels->set_labels( $pa['data'] );
+
+        $x = new x_axis();
+        $x->set_colour( '#A2ACBA' );
+        $x->set_grid_colour( '#D7E4A3' );
+        // Add the X Axis Labels to the X Axis
+        $x->set_labels( $x_labels );
+
+        $chart->set_x_axis( $x );
+
+        //
+        // LOOK:
+        //
+        $x_legend = new x_legend( 'Dias' );
+        $x_legend->set_style( '{font-size: 20px; color: #778877}' );
+        $chart->set_x_legend( $x_legend );
+
+        //
+        // remove this when the Y Axis is smarter
+        //
+        $y = new y_axis();
+        $fator = 2;
+        $y->set_range( min($pa['diastolica']) - $fator, max($pa['sistolica']) + $fator, $fator );
+        $chart->add_y_axis( $y );
+
+        echo $chart->toPrettyString();
     }
 }
 ?>
