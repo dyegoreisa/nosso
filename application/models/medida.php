@@ -26,7 +26,7 @@ class Medida extends CI_Model
             $this->db->order_by('data');
         }
 
-        $this->db->select($this->columns, FALSE)->from('medida m')->join('pessoa p', 'm.pessoa_id = p.id');
+        $this->db->select($this->columns, FALSE)->from('medida m')->join('pessoa p', 'm.pessoa_id = p.id')->where('p.nome', 'dyego');
         $query = $this->db->get();
 
         return $query->result();
@@ -80,6 +80,39 @@ class Medida extends CI_Model
     public function excluir($id)
     {
         $this->db->delete('medida', array('id' => $id));
+    }
+
+    public function grafico($pessoaId, $dataInicio, $dataFim, $tipoDado)
+    {   
+        $this->db->select($this->columns, FALSE)
+                 ->from('medida m')
+                 ->join('pessoa p', 'm.pessoa_id = p.id')
+                 ->where('p.id', $pessoaId)
+                 ->where("m.data >= '{$dataInicio}'")
+                 ->where("m.data <= '{$dataFim}'")
+                 ->order_by('data');
+
+        $query = $this->db->get();
+
+        $result = $query->result();
+
+        switch($tipoDado)
+        {
+            case 'peso':
+                return $this->listaPesos($result);
+                break;
+        }
+    }
+
+    private function listaPesos($dados)
+    {
+        $array = array();
+        foreach ($dados as $key => $dado) {
+            $array['peso'][$key] = (float)$dado->peso;
+            $array['data'][$key] = $dado->data;
+        }
+
+        return $array;
     }
 }
 ?>
