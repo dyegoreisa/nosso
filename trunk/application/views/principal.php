@@ -8,7 +8,9 @@
         <link rel="stylesheet" type="text/css" href="http://<?= $_SERVER['HTTP_HOST']; ?>/theme/superfish.css" />
         <script type="text/javascript" src="http://<?= $_SERVER['HTTP_HOST']; ?>/javascript/jquery-1.4.4.min.js"></script>
         <script type="text/javascript" src="http://<?= $_SERVER['HTTP_HOST']; ?>/javascript/hoverIntent.js"></script>
-        <script type="text/javascript" src="http://<?= $_SERVER['HTTP_HOST']; ?>/javascript/superfish.js"></script>        <script type="text/javascript" src="http://<?= $_SERVER['HTTP_HOST']; ?>/javascript/ui/jquery.ui.core.js"></script>
+        <script type="text/javascript" src="http://<?= $_SERVER['HTTP_HOST']; ?>/javascript/superfish.js"></script>
+        <script type="text/javascript" src="http://<?= $_SERVER['HTTP_HOST']; ?>/javascript/supersubs.js"></script>
+        <script type="text/javascript" src="http://<?= $_SERVER['HTTP_HOST']; ?>/javascript/ui/jquery.ui.core.js"></script>
         <script type="text/javascript" src="http://<?= $_SERVER['HTTP_HOST']; ?>/javascript/ui/jquery.ui.widget.js"></script>
         <script type="text/javascript" src="http://<?= $_SERVER['HTTP_HOST']; ?>/javascript/ui/jquery.ui.button.js"></script>
         <script type="text/javascript" src="http://<?= $_SERVER['HTTP_HOST']; ?>/javascript/ui/jquery.ui.datepicker.js"></script>
@@ -24,14 +26,20 @@
 
                 $('a', '#submenu').button();
                 $('input:submit', '#main').button();
-                $('ul.sf-menu').superfish();
+
+                $("ul.sf-menu").supersubs({ 
+                    minWidth:    12,
+                    maxWidth:    27,
+                    extraWidth:  1
+                }).superfish();                
+
                 $('input.data').datepicker({
                     changeMonth: true,
                     changeYear: true,
                     showOtherMonths: true,
                     selectOtherMonths: true,
                     showButtonPanel: true,
-                             showOn: "button",
+                    showOn: "button",
                     buttonImage: "/theme/images/calendar.gif",
                     buttonImageOnly: true,
                     constrainInput: false
