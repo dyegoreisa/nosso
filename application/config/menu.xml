@@ -4,25 +4,27 @@
 		<label>Principal</label>
 		<link>/principal</link>
 	</item>
+    <item>
+        <label>Pessoa</label>
+        <link>/GerenciarPessoa</link>
+    </item>
 	<item>
-		<label>Relatorio de contas</label>
-		<link>/Relatorio</link>
-	</item>
-	<item>
-		<label>Gerenciar</label>
+		<label>Orçamento</label>
+		<link>#</link>
 		<submenu>
-			<item>
-				<label>Pessoa</label>
-				<link>/GerenciarPessoa</link>
-			</item>
 			<item>
 				<label>Conta</label>
 				<link>/GerenciarOperacaoContabil</link>
 			</item>
+            <item>
+                <label>Relatorio</label>
+                <link>/Relatorio</link>
+            </item>
 		</submenu>
 	</item>
     <item>
         <label>Saúde</label>
+        <link>#</link>
 		<submenu>
 			<item>
 				<label>Medida</label>
