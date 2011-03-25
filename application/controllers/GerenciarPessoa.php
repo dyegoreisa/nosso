@@ -99,6 +99,8 @@ class GerenciarPessoa extends CI_Controller
 
         if (!isset($this->pessoas)) {
             $pessoas = $this->Pessoa->listar($campo, $ordem);
+        } else {
+            $pessoas = $this->pessoas;
         }
 
         $this->load->view('principal', array(
