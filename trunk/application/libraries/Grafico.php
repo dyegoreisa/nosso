@@ -7,6 +7,8 @@ class Grafico
     private $chart;
     private $scale;
     private $arrayElements;
+    private $max;
+    private $min;
 
     public function __construct()
     {
@@ -25,7 +27,7 @@ class Grafico
         $this->chart->set_title($objTitle);
     }
 
-    public function addElement($name, $elements, $color)
+    public function addElement($elements, $name, $color)
     {
         $this->elements[] = $elements;
         $objArea = new area();
@@ -35,7 +37,7 @@ class Grafico
         $this->chart->add_element($objArea);
     }
 
-    public function setLabels($labels, $color, $title)
+    public function setLabels($labels, $title, $color)
     {
         $objXLabels = new x_axis_labels();
         $objXLabels->set_steps(1);
@@ -56,16 +58,28 @@ class Grafico
 
     private function calculateRange()
     {
-        $max = $min = 0;
-        foreach ($this->elements as $elements)
+        $max = 0;
+        $min = 99999;
+        foreach ($this->elements as $elements) {
+            if ($max < max($elements)) {
+                $max = max($elements);
+            }
+            if ($min > min($elements)) {
+                $min = min($elements);
+            }
+        }
+
+        $this->max = $max;
+        $this->min = $min;
     }
 
     public function render()
     {
         $objY = new y_axis();
-        $objY->set_range( min($medidas['peso']) - $this->scale, max($medidas['peso']) + $this->scale, $this->scale);
-        $chart->add_y_axis( $y );
+        $this->calculateRange();
+        $objY->set_range($this->min - $this->scale, $this->max + $this->scale, $this->scale);
+        $this->chart->add_y_axis($objY);
 
-        echo $chart->toPrettyString();
+        echo $this->chart->toPrettyString();
     }
 }

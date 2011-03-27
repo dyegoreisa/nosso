@@ -65,5 +65,12 @@ class Pessoa extends CI_Model
         }
         return $pessoas;
     }
+
+    public function getTipoOsseoById($id)
+    {
+        $pessoa = $this->getById($id);
+        return $pessoa->tipo_osseo;
+    }
+
 }
 ?>
