@@ -3,10 +3,18 @@
 class GerenciarMedida extends CI_Controller
 {
     private $medidas;
+    private $IMCBase;
     
     public function __construct()
     {
         parent::__construct();
+
+        $this->IMCBase = array(
+            'fino'  => 20,
+            'médio' => 22.45,
+            'largo' => 24.9
+        );
+
 
         // SubMenu
         $this->submenu->addItem('Novo', '/GerenciarMedida/editar');
@@ -158,13 +166,14 @@ class GerenciarMedida extends CI_Controller
         $this->load->model('Pessoa');
         $pessoas = $this->Pessoa->getOptionsForDropdown();
 
-        $this->basicform->addDropdown('Pessoa: ', 'pessoa_id', 'pessoa_id', isset($medida) ? $medida->pessoa_id: NULL, $pessoas);
-        $this->basicform->addInput('Data inicio: ', 'data_inicio', 'data_inicio', 'data', isset($medida) ? $medida->data: NULL);
-        $this->basicform->addInput('Data fim: ', 'data_fim', 'data_fim', 'data', isset($medida) ? $medida->data: NULL);
+        $this->basicform->addDropdown('Tipo: ', 'tipo_dado', 'tipo_dado', NULL, array('peso' => 'Peso', 'imc' => 'IMC'));
+        $this->basicform->addDropdown('Pessoa: ', 'pessoa_id', 'pessoa_id', NULL, $pessoas);
+        $this->basicform->addInput('Data inicio: ', 'data_inicio', 'data_inicio', 'data', NULL);
+        $this->basicform->addInput('Data fim: ', 'data_fim', 'data_fim', 'data', NULL);
 
         $this->load->view('principal', array(
             'template' => 'form',
-            'titulo'   => 'Gerar gráfico',
+            'titulo'   => 'Gerar gráfico de PESO ou IMC',
             'dados'    => array(
                 'action' => '/GerenciarMedida/grafico',
                 'submit' => 'Gerar',
@@ -188,72 +197,86 @@ class GerenciarMedida extends CI_Controller
 
             $this->load->view('principal', array(
                 'template' => '/GerenciarMedida/grafico',
-                'titulo'   => 'Gráfico',
+                'titulo'   => 'Gráfico de ' . strtoupper($this->input->post('tipo_dado')),
                 'dados'    => array(
                     'pessoa_id'   => $this->input->post('pessoa_id'),
                     'data_inicio' => preg_replace($regexData, '\3-\2-\1', $this->input->post('data_inicio')),
-                    'data_fim'    => preg_replace($regexData, '\3-\2-\1', $this->input->post('data_fim'))
+                    'data_fim'    => preg_replace($regexData, '\3-\2-\1', $this->input->post('data_fim')),
+                    'tipo_dado'   => $this->input->post('tipo_dado')
                 )
             ));
         }
     }
 
-    public function dataJson($pessoaId, $dataInicio, $dataFim)
+    public function dataJson($pessoaId, $dataInicio, $dataFim, $tipoDado)
     {
-        include 'api/ofc/php-ofc-library/open-flash-chart.php';
-
         $regexData = '/^([12][0-9]{3})-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])$/';
 
         $this->load->model('Medida');
-        $medidas = $this->Medida->grafico($pessoaId, $dataInicio, $dataFim, 'peso');
+        $medidas = $this->Medida->grafico($pessoaId, $dataInicio, $dataFim, $tipoDado);
 
         $this->load->model('Pessoa');
         $pessoa = $this->Pessoa->getById($pessoaId);
 
-        $chart = new open_flash_chart();
-
         $dataInicioF = preg_replace($regexData, '\3/\2/\1', $dataInicio);
         $dataFimF    = preg_replace($regexData, '\3/\2/\1', $dataFim);
-        $title = new title( "Peso de {$pessoa->nome} - {$dataInicioF} e {$dataFimF}" );
-        $title->set_style( "{font-size: 20px; color: #A2ACBA; text-align: center;}" );
-        $chart->set_title( $title );
 
-        $area = new area();
-        $area->set_colour( '#5B56B6' );
-        $area->set_values( $medidas['peso'] );
-        $area->set_key( 'Peso', 12 );
-        $chart->add_element( $area );
+        $this->load->library('Grafico');
+        
+        $this->grafico->setScale(5);
 
-        $x_labels = new x_axis_labels();
-        $x_labels->set_steps( 1 );
-        $x_labels->set_vertical();
-        $x_labels->set_colour( '#A2ACBA' );
-        $x_labels->set_labels( $medidas['data'] );
+        switch ($tipoDado)
+        {
+            case 'peso': 
+                $this->grafico->setTitulo("Peso - {$pessoa->nome} - {$dataInicioF} à {$dataFimF}");
 
-        $x = new x_axis();
-        $x->set_colour( '#A2ACBA' );
-        $x->set_grid_colour( '#D7E4A3' );
-        // Add the X Axis Labels to the X Axis
-        $x->set_labels( $x_labels );
+                $pesoIdeal = $this->pesoIdeal($medidas['peso'], $pessoaId);
+                $this->grafico->addElement($pesoIdeal, 'Peso ideal', '#228B22');
+                $this->grafico->addElement($medidas['peso'], 'Peso', '#5B56B6');
+                break;
 
-        $chart->set_x_axis( $x );
+            case 'imc':
+                $this->grafico->setTitulo("IMC - {$pessoa->nome} - {$dataInicioF} à {$dataFimF}");
 
-        //
-        // LOOK:
-        //
-        $x_legend = new x_legend( 'Dias' );
-        $x_legend->set_style( '{font-size: 20px; color: #778877}' );
-        $chart->set_x_legend( $x_legend );
+                $imcIdeal = $this->imcIdeal($medidas['imc'], $pessoaId);
+                $this->grafico->addElement($imcIdeal, 'IMC ideal', '#228B22'); 
+                $this->grafico->addElement($medidas['imc'], 'IMC', '#5B56B6');
+                break;
+        }
 
-        //
-        // remove this when the Y Axis is smarter
-        //
-        $y = new y_axis();
-        $fator = 5;
-        $y->set_range( min($medidas['peso']) - $fator, max($medidas['peso']) + $fator, $fator );
-        $chart->add_y_axis( $y );
+        $this->grafico->setLabels($medidas['data'], 'Dias', '#A2ACBA');
+        $this->grafico->render(); 
+    }
 
-        echo $chart->toPrettyString();
+    private function pesoIdeal($pesos, $pessoaId)
+    {
+        $this->load->model('Pessoa');
+        $tipoOsseo = $this->Pessoa->getTipoOsseoById($pessoaId);
+
+        $this->load->model('Medida');
+        $altura    = $this->Medida->getAlturaById($pessoaId);
+        
+        $pesoIdeal = $this->IMCBase[$tipoOsseo] * ($altura * $altura);
+
+        $arrayPesoIdeal = array();
+        for($i = 0; $i < count($pesos); $i++) {
+            $arrayPesoIdeal[$i] = $pesoIdeal;
+        }
+
+        return $arrayPesoIdeal;
+    }
+
+    private function imcIdeal($IMCs, $pessoaId)
+    {
+        $this->load->model('Pessoa');
+        $tipoOsseo = $this->Pessoa->getTipoOsseoById($pessoaId);
+
+        $arrayImcIdeal = array();
+        for($i = 0; $i < count($IMCs); $i++) {
+            $arrayImcIdeal[$i] = $this->IMCBase[$tipoOsseo];
+        }
+
+        return $arrayImcIdeal;
     }
 }
 ?>

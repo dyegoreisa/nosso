@@ -180,7 +180,7 @@ class GerenciarPressaoArterial extends CI_Controller
 
         $this->load->view('principal', array(
             'template' => 'form',
-            'titulo'   => 'Gerar gráfico',
+            'titulo'   => 'Gerar gráfico de MRPA',
             'dados'    => array(
                 'action' => '/GerenciarPressaoArterial/grafico',
                 'submit' => 'Gerar',
@@ -204,7 +204,7 @@ class GerenciarPressaoArterial extends CI_Controller
 
             $this->load->view('principal', array(
                 'template' => '/GerenciarPressaoArterial/grafico',
-                'titulo'   => 'Gráfico',
+                'titulo'   => 'Gráfico de MRPA',
                 'dados'    => array(
                     'pessoa_id'   => $this->input->post('pessoa_id'),
                     'data_inicio' => preg_replace($regexData, '\3-\2-\1', $this->input->post('data_inicio')),
@@ -226,56 +226,37 @@ class GerenciarPressaoArterial extends CI_Controller
         $this->load->model('Pessoa');
         $pessoa = $this->Pessoa->getById($pessoaId);
 
-        $chart = new open_flash_chart();
-
         $dataInicioF = preg_replace($regexData, '\3/\2/\1', $dataInicio);
         $dataFimF    = preg_replace($regexData, '\3/\2/\1', $dataFim);
-        $title = new title( "MRPA de {$pessoa->nome} - {$dataInicioF} e {$dataFimF}" );
-        $title->set_style( "{font-size: 20px; color: #A2ACBA; text-align: center;}" );
-        $chart->set_title( $title );
 
-        $area1 = new area();
-        $area1->set_colour( '#5B56B6' );
-        $area1->set_values( $pa['sistolica'] );
-        $area1->set_key( 'Sistólica', 12 );
-        $chart->add_element( $area1 );
+        $this->load->library('Grafico');
+        
+        $this->grafico->setScale(5);
 
-        $area2 = new area();
-        $area2->set_colour( '#5B5600' );
-        $area2->set_values( $pa['diastolica'] );
-        $area2->set_key( 'Diastólica', 12 );
-        $chart->add_element( $area2 );
+        $this->grafico->setTitulo("MRPA - {$pessoa->nome} - {$dataInicioF} à {$dataFimF}");
 
-        $x_labels = new x_axis_labels();
-        $x_labels->set_steps( 1 );
-        $x_labels->set_vertical();
-        $x_labels->set_colour( '#A2ACBA' );
-        $x_labels->set_labels( $pa['data'] );
+        $sistolicaControlada = $this->pressaoControlada($pa['sistolica'], 'sistolica');
+        $this->grafico->addElement($sistolicaControlada, 'Sistolica controlada', '#556B2F');
 
-        $x = new x_axis();
-        $x->set_colour( '#A2ACBA' );
-        $x->set_grid_colour( '#D7E4A3' );
-        // Add the X Axis Labels to the X Axis
-        $x->set_labels( $x_labels );
+        $diastolicaControlada = $this->pressaoControlada($pa['diastolica'], 'diastolica');
+        $this->grafico->addElement($diastolicaControlada, 'Diatolica controlada', '#228B22'); 
 
-        $chart->set_x_axis( $x );
+        $this->grafico->addElement($pa['sistolica'], 'Sistolica', '#FF0000');
+        $this->grafico->addElement($pa['diastolica'], 'Diastólica', '#A52A2A');
 
-        //
-        // LOOK:
-        //
-        $x_legend = new x_legend( 'Dias' );
-        $x_legend->set_style( '{font-size: 20px; color: #778877}' );
-        $chart->set_x_legend( $x_legend );
+        $this->grafico->setLabels($pa['data'], 'Dias', '#A2ACBA');
+        $this->grafico->render(); 
+    }
 
-        //
-        // remove this when the Y Axis is smarter
-        //
-        $y = new y_axis();
-        $fator = 2;
-        $y->set_range( min($pa['diastolica']) - $fator, max($pa['sistolica']) + $fator, $fator );
-        $chart->add_y_axis( $y );
+    private function pressaoControlada($pa, $tipo)
+    {
+        $paControladas = array();
+        for ($i = 0; $i < count($pa); $i++) {
+            $paControladas['sistolica'][]  = 130;
+            $paControladas['diastolica'][] = 85;
+        }
 
-        echo $chart->toPrettyString();
+        return $paControladas[$tipo];
     }
 }
 ?>

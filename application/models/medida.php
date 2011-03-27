@@ -12,6 +12,7 @@ class Medida extends CI_Model
         $this->columns = "
             m.id
             , DATE_FORMAT(m.data,'%d/%m/%Y') as data
+            , m.peso / (m.altura * m.altura) as imc
             , m.altura
             , m.peso
             , p.nome
@@ -94,25 +95,27 @@ class Medida extends CI_Model
 
         $query = $this->db->get();
 
-        $result = $query->result();
+        $rows = $query->result();
 
-        switch($tipoDado)
-        {
-            case 'peso':
-                return $this->listaPesos($result);
-                break;
+        $dados = array();
+        foreach ($rows as $key => $row) {
+            $dados[$tipoDado][$key] = (float)$row->$tipoDado;
+            $dados['data'][$key] = $row->data;
         }
+
+        return $dados;
     }
 
-    private function listaPesos($dados)
+    public function getAlturaById($pessoaId)
     {
-        $array = array();
-        foreach ($dados as $key => $dado) {
-            $array['peso'][$key] = (float)$dado->peso;
-            $array['data'][$key] = $dado->data;
-        }
-
-        return $array;
+        $this->db->select('altura')
+                 ->from('medida m')
+                 ->where('m.pessoa_id', $pessoaId)
+                 ->order_by('data', 'desc')
+                 ->limit(1);
+        $query = $this->db->get();
+        $medida = $query->result();
+        return (float)$medida[0]->altura;
     }
 }
 ?>

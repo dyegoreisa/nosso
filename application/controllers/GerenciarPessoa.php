@@ -43,11 +43,18 @@ class GerenciarPessoa extends CI_Controller
             $titulo = 'Novo cadastro de pessoa';
         }
 
+        $tiposOsseos = array(
+            'fino'  => 'Fino',
+            'médio' => 'Médio',
+            'largo' => 'Largo'
+        );
+
         $this->basicform->addInput('Nome: ', 'nome', 'nome', '', isset($pessoa) ? $pessoa->nome: NULL);
         $this->basicform->addInput('Sobrenome: ', 'sobrenome', 'sobrenome', '', isset($pessoa) ? $pessoa->sobrenome : NULL);
         $formRadio = $this->basicform->addRadio('Sexo: ', 'sexo', 'sexo');
         $formRadio->addItem('Masculino', 'sexo', 'MasculinoId', 'Masculino', '', isset($pessoa) ? $pessoa->sexo : NULL);
         $formRadio->addItem('Feminino', 'sexo', 'FemininoId', 'Feminino', '', isset($pessoa) ? $pessoa->sexo : NULL);
+        $this->basicform->addDropdown('Tipo osseo: ', 'tipo_osseo', 'tipo_osseo', isset($pessoa) ? $pessoa->tipo_osseo: NULL, $tiposOsseos);
 
         $this->load->view('principal', array(
             'template' => 'form',
