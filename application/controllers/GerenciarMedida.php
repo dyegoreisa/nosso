@@ -48,7 +48,7 @@ class GerenciarMedida extends CI_Controller
             $medida = $this->Medida->getById($id);
             $titulo = 'Alterar Medida';
         } else {
-            $titulo = 'Inserir Medida';
+            $titulo = 'Registrar Medida';
         }
 
         $this->load->model('Pessoa');

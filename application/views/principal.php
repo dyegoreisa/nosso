@@ -7,14 +7,22 @@
         <link rel="stylesheet" type="text/css" href="http://<?= $_SERVER['HTTP_HOST']; ?>/theme/style.css" />
         <link rel="stylesheet" type="text/css" href="http://<?= $_SERVER['HTTP_HOST']; ?>/theme/superfish.css" />
         <script type="text/javascript" src="http://<?= $_SERVER['HTTP_HOST']; ?>/javascript/jquery-1.4.4.min.js"></script>
+        <script type="text/javascript" src="http://<?= $_SERVER['HTTP_HOST']; ?>/javascript/livequery/jquery.livequery.js"></script>
         <script type="text/javascript" src="http://<?= $_SERVER['HTTP_HOST']; ?>/javascript/hoverIntent.js"></script>
         <script type="text/javascript" src="http://<?= $_SERVER['HTTP_HOST']; ?>/javascript/superfish.js"></script>
         <script type="text/javascript" src="http://<?= $_SERVER['HTTP_HOST']; ?>/javascript/supersubs.js"></script>
         <script type="text/javascript" src="http://<?= $_SERVER['HTTP_HOST']; ?>/javascript/ui/jquery.ui.core.js"></script>
+        <script type="text/javascript" src="http://<?= $_SERVER['HTTP_HOST']; ?>/javascript/ui/jquery.ui.position.js"></script>
         <script type="text/javascript" src="http://<?= $_SERVER['HTTP_HOST']; ?>/javascript/ui/jquery.ui.widget.js"></script>
         <script type="text/javascript" src="http://<?= $_SERVER['HTTP_HOST']; ?>/javascript/ui/jquery.ui.button.js"></script>
+        <script type="text/javascript" src="http://<?= $_SERVER['HTTP_HOST']; ?>/javascript/ui/jquery.ui.dialog.js"></script>
         <script type="text/javascript" src="http://<?= $_SERVER['HTTP_HOST']; ?>/javascript/ui/jquery.ui.datepicker.js"></script>
+        <script type="text/javascript" src="http://<?= $_SERVER['HTTP_HOST']; ?>/javascript/ui/jquery.ui.mouse.js"></script>
+        <script type="text/javascript" src="http://<?= $_SERVER['HTTP_HOST']; ?>/javascript/ui/jquery.ui.draggable.js"></script>
         <script type="text/javascript" src="http://<?= $_SERVER['HTTP_HOST']; ?>/javascript/ui/i18n/jquery.ui.datepicker-pt-BR.js"></script>
+        <?php if (isset($js) && $js === TRUE): ?>
+            <script type="text/javascript" src="http://<?= $_SERVER['HTTP_HOST']; ?>/javascript/behavior/<?= $template; ?>.js"></script>
+        <?php endif; ?>
         <script type="text/javascript">
             $(document).ready(function() {
                 $('a.excluir').click(function () {
@@ -26,6 +34,8 @@
 
                 $('a', '#submenu').button();
                 $('input:submit', '#main').button();
+                $('a', '.botoes').button();
+                $('a', '.botoes_principal').button();
 
                 $("ul.sf-menu").supersubs({ 
                     minWidth:    12,
@@ -64,6 +74,20 @@
                     </div>
                     <?php $this->load->view($template, $dados); ?>
                 </fieldset>
+            <?php else: ?>
+            <div class="botoes_principal">
+                <fieldset>
+                    <legend>Saúde</legend>
+                    <a href="/GerenciarPressaoArterial/editar">Registrar pressão arterial</a>
+                    <a href="/GerenciarMedida/editar">Registrar medida</a>
+                </fieldset>
+                <br/>
+                <fieldset>
+                    <legend>Or&ccedil;amento</legend>
+                    <a href="/GerenciarOperacaoContabil/editar">Cadastrar nova conta</a>
+                    <a href="/Relatorio/executar/<?=$dataInicio?>/<?=$dataFim?>">Emitir relatório de contas a pagar deste mês</a>
+                </fieldset>
+            </div>
             <?php endif; ?>
         </div>
     </body>

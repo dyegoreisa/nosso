@@ -8,7 +8,7 @@
         <td nowrap><?= $operacao->vencimento; ?></td>
         <td><?= $operacao->protocolo; ?>&nbsp;</td>
         <td nowrap><?= $operacao->status; ?></td>
-        <td nowrap><?= $this->acoes->render("{$operacao->id}/{$operacao->tipo_operacao_contabil_id}", "conta à {$operacao->tipo} {$operacao->categoria} [{$valor}] [{$operacao->vencimento}]"); ?></td>
+        <td nowrap><?= $this->acoes->render("{$operacao->id}/{$operacao->tipo_operacao_contabil_id}", "{$operacao->tipo}\nCategoria: {$operacao->categoria}\nValor: {$valor}\nVencimento: {$operacao->vencimento}"); ?></td>
     </tr>
 <?php endforeach; ?>
 </table>

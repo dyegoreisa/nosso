@@ -8,15 +8,15 @@ class MakeReport
     private $filtros;
     private $displayFiltros;
     private $regexData;
-    private $regexData2;
+    private $regexDataBR;
 
     private $fields;
 
     public function __construct()
     {
         $this->CI =& get_instance();
-        $this->regexData  = '/^(0[1-9]|[12][0-9]|3[01])\/(0[1-9]|1[012])\/([12][0-9]{3})$/';
-        $this->regexData2 = '/^([12][0-9]{3})-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])$/';
+        $this->regexData   = '/^(0[1-9]|[12][0-9]|3[01])\/(0[1-9]|1[012])\/([12][0-9]{3})$/';
+        $this->regexDataBR = '/^([12][0-9]{3})-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])$/';
     }
 
     public function getFields()
@@ -53,6 +53,11 @@ class MakeReport
             }
         }
         return 'ORDER BY ' . implode(', ', $ordem);
+    }
+
+    public function getFiltrosString()
+    {
+        return implode('/', $this->filtros);
     }
 
     public function getDisplayFiltros()
@@ -94,22 +99,22 @@ class MakeReport
         $where = array();
         if (!empty($this->filtros['data_inicio'])) {
             $where[] = "oc.vencimento >= '{$this->filtros['data_inicio']}'";
-            $this->displayFiltros[] = 'Data inicio: ' . preg_replace($this->regexData2, '\3/\2/\1', $this->filtros['data_inicio']);
+            $this->displayFiltros[] = 'Data inicio: ' . preg_replace($this->regexDataBR, '\3/\2/\1', $this->filtros['data_inicio']);
         }
 
         if (!empty($this->filtros['data_fim'])) {
             $where[] = "oc.vencimento <= '{$this->filtros['data_fim']}'";
-            $this->displayFiltros[] = 'Data fim: ' . preg_replace($this->regexData2, '\3/\2/\1', $this->filtros['data_fim']);
+            $this->displayFiltros[] = 'Data fim: ' . preg_replace($this->regexDataBR, '\3/\2/\1', $this->filtros['data_fim']);
         }
 
-        if ($this->filtros['categoria'] != 0) {
+        if (isset($this->filtros['categoria']) && $this->filtros['categoria'] != 0) {
             $where[] = "coc.id = '{$this->filtros['categoria']}'";
 			$query = $this->CI->db->get_where('categoria_operacao_contabil', array('id' => $this->filtros['categoria']));
 			$tipo = $query->result();
             $this->displayFiltros[] = 'Categoria: ' . $tipo[0]->nome;
         }
 
-        if ($this->filtros['status'] != 0) {
+        if (isset($this->filtros['status']) && $this->filtros['status'] != 0) {
             $where[] = "tsoc.id = '{$this->filtros['status']}'";
 			$query = $this->CI->db->get_where('tipo_status_operacao_contabil', array('id' => $this->filtros['status']));
 			$status = $query->result();
@@ -141,7 +146,7 @@ class MakeReport
         switch($tipoRelatorio)
         {
             case 'contas':
-                $sql = 'SELECT oc.id, ' . 
+                $sql = 'SELECT oc.id, oc.tipo_operacao_contabil_id, ' . 
                        $this->getCamposBase() . 
                        $this->getFrom() . 
                        $this->makeWhere() . 

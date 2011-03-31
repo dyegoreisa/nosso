@@ -1,7 +1,7 @@
 <?php
 echo validation_errors();
 echo '<div class="form">';
-echo form_open($action);
+echo form_open($action, array('class' => 'formulario'));
 if(isset($id)) {
     echo form_hidden('id', $id);
 }
@@ -65,7 +65,9 @@ foreach ($this->basicform->getItens() as $item) {
     }
     echo '<br/>';
 }
-echo form_submit('', $submit);
+if (isset($submit)) {
+    echo form_submit('', $submit);
+}
 echo form_close();
 echo '</div>';
 ?>
