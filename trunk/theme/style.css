@@ -79,6 +79,14 @@ div.label_long {
     width: 670px;
 }
 
+div.filtros {
+    float: left;
+}
+
+div.botoes {
+    float: right;
+}
+
 /* Normal
    -------------------------------- */
 

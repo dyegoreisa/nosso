@@ -40,7 +40,7 @@ class GerenciarPressaoArterial extends CI_Controller
             $pressaoArterial = $this->PressaoArterial->getById($id);
             $titulo = 'Alterar Pressão Arterial';
         } else {
-            $titulo = 'Inserir Pressão Arterial';
+            $titulo = 'Registrar Pressão Arterial';
         }
 
         $this->load->model('Pessoa');

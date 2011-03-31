@@ -30,11 +30,13 @@ class Grafico
     public function addElement($elements, $name, $color)
     {
         $this->elements[] = $elements;
-        $objArea = new area();
-        $objArea->set_colour($color);
-        $objArea->set_values($elements);
-        $objArea->set_key($name, 12);
-        $this->chart->add_element($objArea);
+        $objLine = new line();
+        $objLine->set_width(2);
+        $objLine->set_default_dot_style(new solid_dot());
+        $objLine->set_colour($color);
+        $objLine->set_values($elements);
+        $objLine->set_key($name, 12);
+        $this->chart->add_element($objLine);
     }
 
     public function setLabels($labels, $title, $color)

@@ -3,6 +3,7 @@
 class GerenciarOperacaoContabil extends CI_Controller
 {
     private $operacoes;
+    private $ajax;
 
     public function __construct()
     {
@@ -24,6 +25,12 @@ class GerenciarOperacaoContabil extends CI_Controller
         $this->listar();
     }
 
+    public function editarAjax($id = NULL)
+    {
+        $this->ajax = TRUE;
+        $this->editar($id);
+    }
+
     public function editar($id = NULL)
     {
         if (!isset($id)) {
@@ -41,7 +48,7 @@ class GerenciarOperacaoContabil extends CI_Controller
             $operacaoContabil = $this->OperacaoContabil->getById($id);
             $titulo = "Alterar cadastro da conta {$operacaoContabil->categoria}";
         } else {
-            $titulo = 'Novo cadastro de conta';
+            $titulo = 'Cadastrar nova conta';
         }
 
         $this->load->model('TipoOperacaoContabil');
@@ -66,15 +73,28 @@ class GerenciarOperacaoContabil extends CI_Controller
             $this->basicform->addCheckbox('Estimativa: ', 'estimativa', 'estimativa', 1, '');
         }
 
-        $this->load->view('principal', array(
-            'template' => 'form',
-            'titulo'   => $titulo,
-            'dados'    => array(
+        if (isset($this->ajax) && $this->ajax === TRUE) {
+            $this->load->view('form', array(
                 'action' => '/GerenciarOperacaoContabil/salvar',
-                'submit' => 'Salvar',
                 'id'     => $id
-            )
-        ));
+            ));
+        } else {
+            $this->load->view('principal', array(
+                'template' => 'form',
+                'titulo'   => $titulo,
+                'dados'    => array(
+                    'action' => '/GerenciarOperacaoContabil/salvar',
+                    'submit' => 'Salvar',
+                    'id'     => $id
+                )
+            ));
+        }
+    }
+
+    public function salvarAjax()
+    {
+        $this->ajax = TRUE;
+        $this->salvar();
     }
 
     public function salvar()
@@ -87,7 +107,11 @@ class GerenciarOperacaoContabil extends CI_Controller
         $this->form_validation->set_rules('vencimento', 'Vencimento', 'required');
 
         if ($this->form_validation->run() === FALSE) {
-            $this->editar();
+            if (isset($this->ajax) && $this->ajax === TRUE) {
+                $this->editarAjax();
+            } else {
+                $this->editar();
+            }
         } else {
             $this->load->model('OperacaoContabil');
             $this->load->model('TipoStatusOperacaoContabil');
@@ -106,12 +130,18 @@ class GerenciarOperacaoContabil extends CI_Controller
                     }
                 } else {
                     $status = 'A receber';
+                    unset($_POST['estimativa']);
                 }
 
                 $idTipoStatusOperacaoContabil = $this->TipoStatusOperacaoContabil->getIdByName($status);
                 $this->OperacaoContabil->inserir($_POST, $idTipoStatusOperacaoContabil);
             }
-            $this->listar();
+
+            if (isset($this->ajax) && $this->ajax === TRUE) {
+                echo 'ok';
+            } else {
+                $this->listar();
+            }
         }
 
     }
@@ -179,6 +209,12 @@ class GerenciarOperacaoContabil extends CI_Controller
         $this->listar();
     }
 
+    public function selecionarStatusAjax($id, $idTipo)
+    {
+        $this->ajax = TRUE;
+        $this->selecionarStatus($id, $idTipo);
+    }
+
     public function selecionarStatus($id, $idTipo)
     {
         $this->load->helper('form');
@@ -198,20 +234,37 @@ class GerenciarOperacaoContabil extends CI_Controller
         R$ {$valor} com vencimento em 
         {$operacaoContabil->vencimento} <br/>
         {$operacaoContabil->status}";
-        $this->basicform->addLabel($titulo, 'label_long');
+        if (isset($this->ajax) && $this->ajax = TRUE) {
+            $this->basicform->addLabel($titulo, 'label');
+        } else {
+            $this->basicform->addLabel($titulo, 'label_long');
+        }
         $this->basicform->addDropdown('Status: ', 'status', 'status', '', $statusOperacoes);
         $this->basicform->addInput('Valor: ', 'valor', 'valor', '', $operacaoContabil->valor);
         $this->basicform->addHidden('id_tipo', $idTipo);
 
-        $this->load->view('principal', array(
-            'template' => 'form',
-            'titulo'   => "Alterar status da conta",
-            'dados'    => array(
+        if (isset($this->ajax) && $this->ajax = TRUE) {
+            $this->load->view('form', array(
                 'action' => '/GerenciarOperacaoContabil/alterarStatus',
-                'submit' => 'Alterar',
                 'id'     => $id
-            )
-        ));
+            ));
+        } else {
+            $this->load->view('principal', array(
+                'template' => 'form',
+                'titulo'   => "Alterar status da conta",
+                'dados'    => array(
+                    'action' => '/GerenciarOperacaoContabil/alterarStatus',
+                    'submit' => 'Alterar',
+                    'id'     => $id
+                )
+            ));
+        }
+    }
+
+    public function alterarStatusAjax()
+    {
+        $this->ajax = TRUE;
+        $this->alterarStatus();
     }
 
     public function alterarStatus()
@@ -221,7 +274,11 @@ class GerenciarOperacaoContabil extends CI_Controller
         $this->form_validation->set_rules('status', 'Status', 'required');
 
         if ($this->form_validation->run() === FALSE) {
-            $this->selecionarStatus($this->input->post('id'), $this->input->post('id_tipo'));
+            if (isset($this->ajax) && $this->ajax = TRUE) {
+                $this->selecionarStatusAjax($this->input->post('id'), $this->input->post('id_tipo'));
+            } else {
+                $this->selecionarStatus($this->input->post('id'), $this->input->post('id_tipo'));
+            }
         } else {
             $id       = $this->input->post('id'); 
             $idStatus = $this->input->post('status');
@@ -230,7 +287,11 @@ class GerenciarOperacaoContabil extends CI_Controller
             $this->load->model('StatusOperacaoContabil');
             $this->StatusOperacaoContabil->alterarStatus($id, $idStatus, $valor);
 
-            $this->listar();
+            if (isset($this->ajax) && $this->ajax = TRUE) {
+                echo 'ok';
+            } else {
+                $this->listar();
+            }
         }
     }
 }
