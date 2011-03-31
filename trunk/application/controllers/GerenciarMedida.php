@@ -181,29 +181,55 @@ class GerenciarMedida extends CI_Controller
         ));
     }
 
-    public function grafico()
+    public function grafico($pessoaId = NULL, $dataInicio = NULL, $dataFim = NULL, $tipoDado = NULL)
     {
         $regexData = '/^(0[1-9]|[12][0-9]|3[01])\/(0[1-9]|1[012])\/([12][0-9]{3})$/';
         preg_replace($regexData, '\3-\2-\1', $this->input->post('data_inicio'));
-        $this->load->library('form_validation');
 
-        $this->form_validation->set_rules('pessoa_id', 'Pessoa', 'required');
-        $this->form_validation->set_rules('data_inicio', 'Data inicio', 'required');
-        $this->form_validation->set_rules('data_fim', 'Data fim', 'required');
+        if (isset($pessoaId) && isset($dataInicio) && isset($dataFim) && isset($tipoDado)) {
+            $validacao = FALSE;
+            $dados = array(
+                'pessoa_id'   => $pessoaId,
+                'data_inicio' => preg_replace($regexData, '\3-\2-\1', $dataInicio),
+                'data_fim'    => preg_replace($regexData, '\3-\2-\1', $dataFim),
+                'tipo_dado'   => $tipoDado
+            );
+        } else {
+            $this->load->library('form_validation');
 
-        if ($this->form_validation->run() === FALSE) {
+            $this->form_validation->set_rules('pessoa_id', 'Pessoa', 'required');
+            $this->form_validation->set_rules('data_inicio', 'Data inicio', 'required');
+            $this->form_validation->set_rules('data_fim', 'Data fim', 'required');
+
+            $validacao = ($this->form_validation->run() === FALSE);
+
+            $dados = array(
+                'pessoa_id'   => $this->input->post('pessoa_id'),
+                'data_inicio' => preg_replace($regexData, '\3-\2-\1', $this->input->post('data_inicio')),
+                'data_fim'    => preg_replace($regexData, '\3-\2-\1', $this->input->post('data_fim')),
+                'tipo_dado'   => $this->input->post('tipo_dado')
+            );
+        }
+        if ($validacao) {
             $this->filtroGrafico();
         } else {
+            $dadosURL = $dados;
+            switch ($dados['tipo_dado'])
+            {
+                case 'peso': 
+                    $dadosURL['tipo_dado'] = 'imc';
+                    $this->submenu->addItem('Alterar para IMC', '/GerenciarMedida/grafico/' . implode('/', $dadosURL));
+                    break;
 
+                case 'imc':
+                    $dadosURL['tipo_dado'] = 'peso';
+                    $this->submenu->addItem('Alterar para Peso', '/GerenciarMedida/grafico/' . implode('/', $dadosURL));
+                    break;
+            }
             $this->load->view('principal', array(
                 'template' => '/GerenciarMedida/grafico',
                 'titulo'   => 'Gráfico de ' . strtoupper($this->input->post('tipo_dado')),
-                'dados'    => array(
-                    'pessoa_id'   => $this->input->post('pessoa_id'),
-                    'data_inicio' => preg_replace($regexData, '\3-\2-\1', $this->input->post('data_inicio')),
-                    'data_fim'    => preg_replace($regexData, '\3-\2-\1', $this->input->post('data_fim')),
-                    'tipo_dado'   => $this->input->post('tipo_dado')
-                )
+                'dados'    => $dados
             ));
         }
     }

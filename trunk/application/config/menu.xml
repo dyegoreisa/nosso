@@ -2,7 +2,7 @@
 <menu>
 	<item>
 		<label>Principal</label>
-		<link>/Principal</link>
+		<link>/principal</link>
 	</item>
     <item>
         <label>Pessoa</label>
