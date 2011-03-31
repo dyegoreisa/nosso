@@ -48,6 +48,7 @@
     </tr>
     <tr class="impar">
         <th>(Total A pagar + Total Estimado) - Total recebido:</th>
-        <td><?= number_format($total['recebido']->total - ($total['pago']->total + $total['a_pagar']->total + $total['estimativa']->total), 2, ',', '.'); ?></td>
+        <?php $valor = $total['recebido']->total - ($total['pago']->total + $total['a_pagar']->total + $total['estimativa']->total); ?>
+        <td <?php if ($valor < 0): ?>style="color:red"<?php else: ?><?php endif; ?>><?= number_format($valor, 2, ',', '.'); ?></td>
     </tr>
 </table>
