@@ -11,7 +11,8 @@ class PressaoArterial extends CI_Model
         $this->regexData = '/^(0[1-9]|[12][0-9]|3[01])\/(0[1-9]|1[012])\/([12][0-9]{3})$/';
         $this->columns = "
             pa.id
-            , DATE_FORMAT(pa.data, '%d/%m/%Y') as data
+            , pa.data
+            , DATE_FORMAT(pa.data, '%d/%m/%Y') as dataBR
             , pa.hora
             , pa.sistolica
             , pa.diastolica
@@ -92,7 +93,7 @@ class PressaoArterial extends CI_Model
                  ->where('p.id', $pessoaId)
                  ->where("pa.data >= '{$dataInicio}'")
                  ->where("pa.data <= '{$dataFim}'")
-                 ->order_by('data');
+                 ->order_by('data', 'ASC');
 
         $query = $this->db->get();
 
@@ -112,7 +113,7 @@ class PressaoArterial extends CI_Model
         foreach ($dados as $key => $dado) {
             $array['sistolica'][$key] = (float)$dado->sistolica;
             $array['diastolica'][$key] = (float)$dado->diastolica;
-            $array['data'][$key] = $dado->data;
+            $array['data'][$key] = $dado->dataBR;
         }
 
         return $array;
