@@ -11,7 +11,8 @@ class Medida extends CI_Model
         $this->regexData = '/^(0[1-9]|[12][0-9]|3[01])\/(0[1-9]|1[012])\/([12][0-9]{3})$/';
         $this->columns = "
             m.id
-            , DATE_FORMAT(m.data,'%d/%m/%Y') as data
+            , m.data
+            , DATE_FORMAT(m.data,'%d/%m/%Y') as dataBR
             , m.peso / (m.altura * m.altura) as imc
             , m.altura
             , m.peso
@@ -91,7 +92,7 @@ class Medida extends CI_Model
                  ->where('p.id', $pessoaId)
                  ->where("m.data >= '{$dataInicio}'")
                  ->where("m.data <= '{$dataFim}'")
-                 ->order_by('data');
+                 ->order_by('data', 'ASC');
 
         $query = $this->db->get();
 
@@ -100,7 +101,7 @@ class Medida extends CI_Model
         $dados = array();
         foreach ($rows as $key => $row) {
             $dados[$tipoDado][$key] = (float)$row->$tipoDado;
-            $dados['data'][$key] = $row->data;
+            $dados['data'][$key] = $row->dataBR;
         }
 
         return $dados;

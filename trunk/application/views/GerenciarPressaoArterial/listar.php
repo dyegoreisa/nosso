@@ -3,7 +3,7 @@
 <?php foreach ($pressaoArterials as $key => $pressaoArterial): ?>
     <tr class ="<?= ($key % 2) ? 'impar' : 'par'; ?>">
         <td nowrap><?= $pressaoArterial->nome; ?></td>
-        <td nowrap><?= $pressaoArterial->data; ?></td>
+        <td nowrap><?= $pressaoArterial->dataBR; ?></td>
         <td nowrap><?= $pressaoArterial->hora; ?></td>
         <td nowrap align="right"><?= $pressaoArterial->sistolica; ?></td>
         <td nowrap align="right"><?= $pressaoArterial->diastolica; ?></td>
