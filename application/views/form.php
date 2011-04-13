@@ -42,6 +42,29 @@ foreach ($this->basicform->getItens() as $item) {
             echo form_fieldset_close();
             break;
 
+        case 'radio_image':
+            echo form_fieldset($item->getLabel());
+            foreach ($item->getItens() as $subItem) {
+                $checked = set_radio($subItem->getName(), $subItem->getValue());
+                $checked = empty($checked) ? $subItem->isChecked() : TRUE;
+                echo form_radio(array(
+                    'name'    => $subItem->getName(),
+                    'id'      => $subItem->getId(),
+                    'value'   => $subItem->getValue(),
+                    'checked' => $checked
+                ));
+                $imageProperties = array(
+                    'src'    => "theme/images/{$subItem->getLabel()}.png",
+                    'alt'    => $subItem->getLabel(),
+                    'width'  => '50',
+                    'height' => '135'
+                );
+
+                echo img($imageProperties);
+            }
+            echo form_fieldset_close();
+            break;
+
         case 'dropdown':
             $valor = set_value($item->getName());
             $valor = empty($valor) ? $item->getValue() : $valor;
@@ -66,7 +89,13 @@ foreach ($this->basicform->getItens() as $item) {
     echo '<br/>';
 }
 if (isset($submit)) {
-    echo form_submit('', $submit);
+    $class = (isset($class)) ? $class : '';
+    echo '<br/>';
+    $data = array(
+        'value' => $submit,
+        'class' => $class
+    );
+    echo form_submit($data);
 }
 echo form_close();
 echo '</div>';

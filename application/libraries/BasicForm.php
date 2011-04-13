@@ -23,6 +23,13 @@ class BasicForm
         return $item;
     }
 
+    public function addRadioImage($image, $name, $id)
+    {
+        $item = new ItemForm($image, $name, $id, '', '', NULL, 'radio_image');
+        $this->itens[] = $item;
+        return $item;
+    }
+
 	public function addDropdown($label, $name, $id, $value, array $options)
 	{
 		$item = new ItemForm($label, $name, $id, $value, '', NULL, 'dropdown');

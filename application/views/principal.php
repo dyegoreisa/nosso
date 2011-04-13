@@ -3,92 +3,89 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="pt-br">
     <head>
         <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-        <link rel="stylesheet" type="text/css" href="http://<?= $_SERVER['HTTP_HOST']; ?>/theme/redmond/jquery.ui.all.css" />
-        <link rel="stylesheet" type="text/css" href="http://<?= $_SERVER['HTTP_HOST']; ?>/theme/style.css" />
-        <link rel="stylesheet" type="text/css" href="http://<?= $_SERVER['HTTP_HOST']; ?>/theme/superfish.css" />
-        <script type="text/javascript" src="http://<?= $_SERVER['HTTP_HOST']; ?>/javascript/jquery-1.4.4.min.js"></script>
+        <link rel="stylesheet" type="text/css" href="http://<?= $_SERVER['HTTP_HOST']; ?>/theme/south-street/jquery-ui-1.8.11.custom.css" />
+        <link rel="stylesheet" type="text/css" href="http://<?= $_SERVER['HTTP_HOST']; ?>/theme/nosso.css" />
+        <script type="text/javascript" src="http://<?= $_SERVER['HTTP_HOST']; ?>/javascript/jquery-1.5.1.min.js"></script>
+        <script type="text/javascript" src="http://<?= $_SERVER['HTTP_HOST']; ?>/javascript/jquery-ui-1.8.11.custom.min.js"></script>
         <script type="text/javascript" src="http://<?= $_SERVER['HTTP_HOST']; ?>/javascript/livequery/jquery.livequery.js"></script>
-        <script type="text/javascript" src="http://<?= $_SERVER['HTTP_HOST']; ?>/javascript/hoverIntent.js"></script>
-        <script type="text/javascript" src="http://<?= $_SERVER['HTTP_HOST']; ?>/javascript/superfish.js"></script>
-        <script type="text/javascript" src="http://<?= $_SERVER['HTTP_HOST']; ?>/javascript/supersubs.js"></script>
-        <script type="text/javascript" src="http://<?= $_SERVER['HTTP_HOST']; ?>/javascript/ui/jquery.ui.core.js"></script>
-        <script type="text/javascript" src="http://<?= $_SERVER['HTTP_HOST']; ?>/javascript/ui/jquery.ui.position.js"></script>
-        <script type="text/javascript" src="http://<?= $_SERVER['HTTP_HOST']; ?>/javascript/ui/jquery.ui.widget.js"></script>
-        <script type="text/javascript" src="http://<?= $_SERVER['HTTP_HOST']; ?>/javascript/ui/jquery.ui.button.js"></script>
-        <script type="text/javascript" src="http://<?= $_SERVER['HTTP_HOST']; ?>/javascript/ui/jquery.ui.dialog.js"></script>
-        <script type="text/javascript" src="http://<?= $_SERVER['HTTP_HOST']; ?>/javascript/ui/jquery.ui.datepicker.js"></script>
-        <script type="text/javascript" src="http://<?= $_SERVER['HTTP_HOST']; ?>/javascript/ui/jquery.ui.mouse.js"></script>
-        <script type="text/javascript" src="http://<?= $_SERVER['HTTP_HOST']; ?>/javascript/ui/jquery.ui.draggable.js"></script>
-        <script type="text/javascript" src="http://<?= $_SERVER['HTTP_HOST']; ?>/javascript/ui/i18n/jquery.ui.datepicker-pt-BR.js"></script>
+        <script type="text/javascript" src="http://<?= $_SERVER['HTTP_HOST']; ?>/javascript/jquery.ui.datepicker-pt-BR.js"></script>
+        <script type="text/javascript" src="http://<?= $_SERVER['HTTP_HOST']; ?>/javascript/behavior/principal.js"></script>
         <?php if (isset($js) && $js === TRUE): ?>
             <script type="text/javascript" src="http://<?= $_SERVER['HTTP_HOST']; ?>/javascript/behavior/<?= $template; ?>.js"></script>
         <?php endif; ?>
-        <script type="text/javascript">
-            $(document).ready(function() {
-                $('a.excluir').click(function () {
-                    descricao = $(this).attr('alt');
-                    if (false == confirm('Deseja excluir este registro de ' +descricao+ '?')) {
-                        return false;
-                    }
-                });
-
-                $('a', '#submenu').button();
-                $('input:submit', '#main').button();
-                $('a', '.botoes').button();
-                $('a', '.botoes_principal').button();
-
-                $("ul.sf-menu").supersubs({ 
-                    minWidth:    12,
-                    maxWidth:    27,
-                    extraWidth:  1
-                }).superfish();                
-
-                $('input.data').datepicker({
-                    changeMonth: true,
-                    changeYear: true,
-                    showOtherMonths: true,
-                    selectOtherMonths: true,
-                    showButtonPanel: true,
-                    showOn: "button",
-                    buttonImage: "/theme/images/calendar.gif",
-                    buttonImageOnly: true,
-                    constrainInput: false
-                });
-            });
-        </script>
         <title>Nosso Sistema</title>
     </head>
     <body>
-        <p>Nosso Sistema</p>
-        <div id="menu">
-            <?php $this->menu->render(); ?>
-        </div>
-        <br/><br/><br/><br/>
-        <div id="main">
-            <?php if (isset($template)): ?>
-            <?php $dados = isset($dados) ? $dados : null; ?>
-                <fieldset id="fieldset_main">
-                    <legend><?= $titulo; ?></legend>
+
+        <div id="wrapper">
+            
+            <div id="header"><h1>Nosso</h1></div>
+            
+            <div id="family"></div>
+            
+            <div id="head-top"></div>
+            <div id="head-right"></div>
+            
+            <div id="nav">
+                <?php $this->menu->render(); ?>
+            </div>
+            
+            <div id="body"><div class="i">
+                <?php if (isset($template)): ?>
+                    <h2 class="shallow"><strong><?= $titulo; ?></strong></h2>
+                    <br/>
+                    <p>
+                    <?php $dados = isset($dados) ? $dados : null; ?>
                     <div id="submenu">
                         <?php $this->submenu->render(); ?>
                     </div>
-                    <?php $this->load->view($template, $dados); ?>
-                </fieldset>
-            <?php else: ?>
-            <div class="botoes_principal">
-                <fieldset>
-                    <legend>Saúde</legend>
-                    <a href="/GerenciarPressaoArterial/editar">Registrar pressão arterial</a>
-                    <a href="/GerenciarMedida/editar">Registrar medida</a>
-                </fieldset>
-                <br/>
-                <fieldset>
-                    <legend>Or&ccedil;amento</legend>
-                    <a href="/GerenciarOperacaoContabil/editar">Cadastrar nova conta</a>
-                    <a href="/Relatorio/executar/<?=$dataInicio?>/<?=$dataFim?>">Emitir relatório de contas a pagar deste mês</a>
-                </fieldset>
+                    <br/>
+                    <fieldset id="fieldset_main">
+                        <?php $this->load->view($template, $dados); ?>
+                    </fieldset>
+                    </p>
+                <?php else: ?>
+                    <h2 class="shallow"><strong>Bem-vindo</strong> ao sistema de multiferramentas</h2>
+                    <p>Imaginem a vida como um jogo, no qual vocês fazem malabarismo com cinco bolas que lançam ao ar.
+                    Essas bolas são: o trabalho, a família, a saúde, os amigos e o espírito.
+                    O trabalho é uma bola de borracha. Se cair, bate no chão e pula para cima.
+                    Más as quatro outras são de vidro. Se caírem no chão, quebrarão e ficarão permanentemente danificadas.
+                    Entendam isto e busquem equilíbrio na vida.</p>
+
+                    <p>Lembre-se: Ontem é história. Amanhã é mistério e hoje é uma dádiva. Por isso se chama “presente”.</p>
+                    
+                    <h2 class="shallow"><strong>Saúde</strong></h2>
+                    <p>
+                    <ul>
+                        <li><a href="/GerenciarPressaoArterial/editar">Registrar pressão arterial</a></li>
+                        <li><a href="/GerenciarMedida/editar">Registrar medida</a></li>
+                    </ul>
+                    </p>
+                    
+                    <div class="clear"></div>
+                    
+                    <h2><strong>Orçamento</strong></h2>
+                    <p>
+                    <ul>
+                        <li><a href="/GerenciarOperacaoContabil/editar">Cadastrar nova conta</a></li>
+                        <li><a href="/Relatorio/executar/<?=$dataInicio?>/<?=$dataFim?>">Emitir relatório de contas a pagar deste mês</a></li>
+                        
+                    </ul>
+                    </p>
+                    <!-- 
+                    <h2 class="orange"><strong>Family</strong> fun &amp; travel</h2>
+                    <div id="funtravel">
+                        <img src="theme/images/pic_1.jpg" width="95" height="116" alt="Pic 1" class="left" />
+                        <div id="collect">
+                            <p class="dark">COLLECT OUR</p>
+                            <p class="orange">FUN &amp; TRAVELBOOK</p>
+                            <p class="other">Nulla turpis. Suspendisse erat ipsum, sodales dignissim, bibendum</p>
+                        </div>
+                    </div>
+                    --!>
+                    </div>
+                <?php endif; ?>
             </div>
-            <?php endif; ?>
         </div>
     </body>
 </html>

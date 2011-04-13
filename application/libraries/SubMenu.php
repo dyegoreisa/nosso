@@ -6,9 +6,9 @@ class SubMenu
 {
     private $itens;
 
-    public function addItem($label, $link)
+    public function addItem($label, $link, $class = NULL)
     {
-        $this->itens[] = new ItemMenu($label, $link);
+        $this->itens[] = new ItemMenu($label, $link, $class);
     }
 
     public function render()
@@ -16,7 +16,9 @@ class SubMenu
         if (isset($this->itens)) {
             echo '<ul>';
             foreach ($this->itens as $item) {
-                echo "<li><a href=\"{$item->getLink()}\">{$item->getLabel()}</a></li>";
+                $class = $item->getClass();
+                $class = (isset($class)) ? "class=\"{$item->getClass()}\"" : '';
+                echo "<li><a {$class} href=\"{$item->getLink()}\">{$item->getLabel()}</a></li>";
             }
             echo '</ul>';
         }

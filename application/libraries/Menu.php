@@ -2,13 +2,14 @@
 
 class Menu
 {
-    const MENU_FILE = 'application/config/menu.xml';
+    //const MENU_FILE = 'application/config/menu.xml';
+    const MENU_FILE = 'application/config/family_menu.xml';
 
-    public function render()
+    public function render($class = '')
     {
         $menu = simplexml_load_file(self::MENU_FILE);
 
-        echo '<ul class="sf-menu">';
+        echo "<ul class=\"{$class}\">";
         foreach ($menu as $item) {
             echo "<li><a href=\"{$item->link}\">{$item->label}</a>";
             if (isset($item->submenu) === true) {

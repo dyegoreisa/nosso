@@ -2,6 +2,7 @@
 
 class GerenciarMedida extends CI_Controller
 {
+    private $metas;
     private $medidas;
     private $IMCBase;
     
@@ -17,13 +18,14 @@ class GerenciarMedida extends CI_Controller
 
 
         // SubMenu
-        $this->submenu->addItem('Novo', '/GerenciarMedida/editar');
-        $this->submenu->addItem('Busca', '/GerenciarMedida/buscar');
-        $this->submenu->addItem('Gráfico', '/GerenciarMedida/filtroGrafico');
+        $this->submenu->addItem('Novo', '/GerenciarMedida/editar', 'novo');
+        $this->submenu->addItem('Nova meta', '/GerenciarMedida/editarMeta', 'novo');
+        $this->submenu->addItem('Busca', '/GerenciarMedida/buscar', 'buscar');
+        $this->submenu->addItem('Gráfico', '/GerenciarMedida/filtroGrafico', 'grafico');
 
         // Ações
-        $this->acoes->addItem('[ A ]', '/GerenciarMedida/editar');
-        $this->acoes->addItem('[ X ]', '/GerenciarMedida/excluir', TRUE);
+        $this->acoes->addItem('Alterar medida', '/GerenciarMedida/editar', 'alterar');
+        $this->acoes->addItem('Excluir medida', '/GerenciarMedida/excluir', 'excluir');
     }
 
     public function index()
@@ -96,6 +98,7 @@ class GerenciarMedida extends CI_Controller
 
     public function listar($campo = NULL, $ordem = NULL)
     {
+        $this->load->model('Meta');
         $this->load->model('Medida');
         $this->load->library('Titulos');
 
@@ -110,8 +113,10 @@ class GerenciarMedida extends CI_Controller
         }
 
         if (!isset($this->medidas)) {
+            $metas   = $this->Meta->listar($campo, $ordem);
             $medidas = $this->Medida->listar($campo, $ordem);
         } else {
+            $metas   = $this->metas;
             $medidas = $this->medidas;
         }
 
@@ -119,6 +124,7 @@ class GerenciarMedida extends CI_Controller
             'template' => 'GerenciarMedida/listar',
             'titulo'   => 'Lista de medidas encontradas',
             'dados'    => array(
+                'metas'   => $metas,
                 'medidas' => $medidas
             )
         ));
@@ -134,19 +140,24 @@ class GerenciarMedida extends CI_Controller
             'titulo'   => 'Buscar medida',
             'dados'    => array(
                 'action' => '/GerenciarMedida/efetuarBusca',
-                'submit' => 'Buscar'
+                'submit' => 'Buscar',
+                'class'  => 'buscar'
             )
         ));
     }
 
     public function efetuarBusca($id = NULL)
     {
+        $this->load->model('Meta');
         $this->load->model('Medida');
         if (isset($id)) {
+            $metas   = $this->Meta->buscar($id);
             $medidas = $this->Medida->buscar($id);
         } else {
+            $metas   = $this->Meta->buscar($this->input->post('dado'));
             $medidas = $this->Medida->buscar($this->input->post('dado'));
         }
+        $this->metas   = $metas;
         $this->medidas = $medidas;
         $this->listar();
     }
@@ -303,6 +314,69 @@ class GerenciarMedida extends CI_Controller
         }
 
         return $arrayImcIdeal;
+    }
+
+    public function editarMeta($id = NULL)
+    {
+        if (!isset($id)) {
+            if (isset($_POST['id'])) {
+                $id = $_POST['id'];
+            }
+        }
+
+        $this->load->helper('form');
+        $this->load->library('BasicForm');
+
+        $meta = NULL;
+        if(isset($id) && !empty($id)) {
+            $this->load->model('Meta');
+            $meta = $this->Meta->getById($id);
+            $titulo = 'Alterar Meta';
+        } else {
+            $titulo = 'Registrar Meta';
+        }
+
+        $this->load->model('Pessoa');
+        $pessoas = $this->Pessoa->getOptionsForDropdown();
+
+        $this->basicform->addDropdown('Pessoa: ', 'pessoa_id', 'pessoa_id', isset($meta) ? $meta->pessoa_id: NULL, $pessoas);
+        $this->basicform->addInput('Data da meta: ', 'data', 'data', 'data', isset($meta) ? $meta->data: NULL);
+        $this->basicform->addInput('Altura: ', 'altura', 'altura', '', isset($meta) ? $meta->altura : NULL);
+        $this->basicform->addInput('Meta de peso: ', 'peso', 'peso', '', isset($meta) ? $meta->peso : NULL);
+
+        $this->load->view('principal', array(
+            'template' => 'form',
+            'titulo'   => $titulo,
+            'dados'    => array(
+                'action' => '/GerenciarMedida/salvarMeta',
+                'submit' => 'Salvar',
+                'id'     => $id
+            )
+        ));
+    }
+
+    public function salvarMeta()
+    {
+        $this->load->library('form_validation');
+
+        $this->form_validation->set_rules('pessoa_id', 'Pessoa', 'required');
+        $this->form_validation->set_rules('data', 'Data da meta', 'required');
+        $this->form_validation->set_rules('altura', 'Altura', 'required');
+        $this->form_validation->set_rules('peso', 'Meta de peso', 'required');
+
+        if ($this->form_validation->run() === FALSE) {
+            $this->editar();
+        } else {
+            $this->load->model('Meta');
+
+            if (isset($_POST['id'])) {
+                $id = $this->Meta->atualizar($_POST);
+            } else {
+                $id = $this->Meta->inserir($_POST);
+            }
+            $this->busca();
+        }
+
     }
 }
 ?>

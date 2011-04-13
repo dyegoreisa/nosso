@@ -4,13 +4,13 @@ class ItemMenu
 {
     private $label;
     private $link;
-	private $excluir;
+	private $class;
 
-    public function __construct($label, $link, $excluir = NULL)
+    public function __construct($label, $link, $class = NULL)
     {
-        $this->label   = $label;
-        $this->link    = $link;
-		$this->excluir = $excluir;
+        $this->label = $label;
+        $this->link  = $link;
+		$this->class = $class;
     }
 
     public function getLabel() 
@@ -23,9 +23,9 @@ class ItemMenu
         return $this->link;
     }
 
-	public function isExcluir()
+	public function getClass()
 	{
-		return (isset($this->excluir) && $this->excluir == TRUE) ? TRUE : FALSE;
+		return $this->class;
 	}
 }
 
