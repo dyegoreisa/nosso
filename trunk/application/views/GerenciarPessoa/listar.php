@@ -5,7 +5,7 @@
         <td nowrap><?= $pessoa->nome; ?></td>
         <td><?= $pessoa->sobrenome; ?></td>
         <td nowrap><?= $pessoa->sexo; ?></td>
-        <td nowrap><?= $this->acoes->render($pessoa->id, $pessoa->nome); ?></td>
+        <td nowrap align="center"><?= $this->acoes->render($pessoa->id, $pessoa->nome); ?></td>
     </tr>
 <?php endforeach; ?>
 </table>

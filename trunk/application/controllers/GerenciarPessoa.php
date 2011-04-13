@@ -9,13 +9,13 @@ class GerenciarPessoa extends CI_Controller
         parent::__construct();
 
         // SubMenu
-        $this->submenu->addItem('Novo', '/GerenciarPessoa/editar');
-        $this->submenu->addItem('Busca', '/GerenciarPessoa/buscar');
-        $this->submenu->addItem('Lista', '/GerenciarPessoa/listar');
+        $this->submenu->addItem('Novo', '/GerenciarPessoa/editar', 'novo');
+        $this->submenu->addItem('Busca', '/GerenciarPessoa/buscar', 'buscar');
+        $this->submenu->addItem('Lista', '/GerenciarPessoa/listar', 'listar');
 
         // Ações
-        $this->acoes->addItem('[ A ]', '/GerenciarPessoa/editar');
-        $this->acoes->addItem('[ X ]', '/GerenciarPessoa/excluir', TRUE);
+        $this->acoes->addItem('Alterar pessoa', '/GerenciarPessoa/editar', 'alterar');
+        $this->acoes->addItem('Excluir pessoa', '/GerenciarPessoa/excluir', 'excluir');
     }
 
     public function index()
@@ -31,6 +31,7 @@ class GerenciarPessoa extends CI_Controller
             }
         }
 
+        $this->load->helper('html');
         $this->load->helper('form');
         $this->load->library('BasicForm');
 
@@ -45,16 +46,22 @@ class GerenciarPessoa extends CI_Controller
 
         $tiposOsseos = array(
             'fino'  => 'Fino',
-            'médio' => 'Médio',
+            'medio' => 'Médio',
             'largo' => 'Largo'
         );
+
+        $sexoImagem = (isset($pessoa)) ? strtolower($pessoa->sexo) : 'masculino';
 
         $this->basicform->addInput('Nome: ', 'nome', 'nome', '', isset($pessoa) ? $pessoa->nome: NULL);
         $this->basicform->addInput('Sobrenome: ', 'sobrenome', 'sobrenome', '', isset($pessoa) ? $pessoa->sobrenome : NULL);
         $formRadio = $this->basicform->addRadio('Sexo: ', 'sexo', 'sexo');
         $formRadio->addItem('Masculino', 'sexo', 'MasculinoId', 'Masculino', '', isset($pessoa) ? $pessoa->sexo : NULL);
         $formRadio->addItem('Feminino', 'sexo', 'FemininoId', 'Feminino', '', isset($pessoa) ? $pessoa->sexo : NULL);
-        $this->basicform->addDropdown('Tipo osseo: ', 'tipo_osseo', 'tipo_osseo', isset($pessoa) ? $pessoa->tipo_osseo: NULL, $tiposOsseos);
+        //$this->basicform->addDropdown('Tipo osseo: ', 'tipo_osseo', 'tipo_osseo', isset($pessoa) ? $pessoa->tipo_osseo: NULL, $tiposOsseos);
+        $formRadioImage = $this->basicform->addRadioImage('Estrutura comportal (tipo osseo): ', 'tipo_osseo', 'tipo_osseo');
+        foreach ($tiposOsseos as $key => $tipoOsseo) {
+            $formRadioImage->addItem("{$key}_{$sexoImagem}", 'tipo_osseo', "{$tipoOsseo}Id", strtolower($tipoOsseo), '', isset($pessoa) ? $pessoa->tipo_osseo : NULL);
+        }
 
         $this->load->view('principal', array(
             'template' => 'form',
@@ -129,7 +136,8 @@ class GerenciarPessoa extends CI_Controller
             'titulo'   => 'Buscar pessoa',
             'dados'    => array(
                 'action' => '/GerenciarPessoa/efetuarBusca',
-                'submit' => 'Buscar'
+                'submit' => 'Buscar',
+                'class'  => 'buscar'
             )
         ));
     }

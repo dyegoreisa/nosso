@@ -1,7 +1,7 @@
 <?php if (!empty($filtrosAjax)): ?>
 <span id="filtros_ajax" style="display:none"><?= $filtrosAjax; ?></span>
 <?php endif; ?>
-<div id="dialog-form" title="Novo cadastro de conta" style="display:none"></div>
+<div id="dialog-form" title="BLANK" style="display:none"></div>
 <?php if (!empty($displayFiltros)): ?>
 <div class="filtros">
 <ul>
@@ -14,7 +14,7 @@
 <div class="botoes">
    <a href="#" id="novo">Novo</a> 
 </div>
-<?= br(4); ?>
+<?//=br(4); ?>
 <div id="dados">
 <?php include 'dados.php'; ?>
 </div>

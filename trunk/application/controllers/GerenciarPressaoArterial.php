@@ -9,13 +9,13 @@ class GerenciarPressaoArterial extends CI_Controller
         parent::__construct();
 
         // SubMenu
-        $this->submenu->addItem('Novo', '/GerenciarPressaoArterial/editar');
-        $this->submenu->addItem('Busca', '/GerenciarPressaoArterial/buscar');
-        $this->submenu->addItem('Gráfico', '/GerenciarPressaoArterial/grafico');
+        $this->submenu->addItem('Novo', '/GerenciarPressaoArterial/editar', 'novo');
+        $this->submenu->addItem('Busca', '/GerenciarPressaoArterial/buscar', 'buscar');
+        $this->submenu->addItem('Gráfico', '/GerenciarPressaoArterial/grafico', 'grafico');
 
         // Ações
-        $this->acoes->addItem('[ A ]', '/GerenciarPressaoArterial/editar');
-        $this->acoes->addItem('[ X ]', '/GerenciarPressaoArterial/excluir', TRUE);
+        $this->acoes->addItem('Alterar pressão arterial', '/GerenciarPressaoArterial/editar', 'alterar');
+        $this->acoes->addItem('Excluir pressão arterial', '/GerenciarPressaoArterial/excluir', 'excluir');
     }
 
     public function index()

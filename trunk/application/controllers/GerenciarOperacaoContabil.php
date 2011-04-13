@@ -10,14 +10,14 @@ class GerenciarOperacaoContabil extends CI_Controller
         parent::__construct();
 
         // SubMenu
-        $this->submenu->addItem('Novo', '/GerenciarOperacaoContabil/editar');
-        $this->submenu->addItem('Busca', '/GerenciarOperacaoContabil/buscar');
-        $this->submenu->addItem('Lista', '/GerenciarOperacaoContabil/listar');
+        $this->submenu->addItem('Novo', '/GerenciarOperacaoContabil/editar', 'novo');
+        $this->submenu->addItem('Busca', '/GerenciarOperacaoContabil/buscar', 'buscar');
+        $this->submenu->addItem('Lista', '/GerenciarOperacaoContabil/listar', 'listar');
 
         // Ações
-        $this->acoes->addItem('[ A ]', '/GerenciarOperacaoContabil/editar');
-        $this->acoes->addItem('[ S ]', '/GerenciarOperacaoContabil/selecionarStatus');
-        $this->acoes->addItem('[ X ]', '/GerenciarOperacaoContabil/excluir', TRUE);
+        $this->acoes->addItem('Alterar conta', '/GerenciarOperacaoContabil/editar', 'alterar');
+        $this->acoes->addItem('Alterar status da conta', '/GerenciarOperacaoContabil/selecionarStatus', 'status');
+        $this->acoes->addItem('Excluir conta', '/GerenciarOperacaoContabil/excluir', 'excluir');
     }
 
     public function index()
