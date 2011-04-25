@@ -51,6 +51,7 @@ div#submenu ul {
 div#submenu ul li {
 	display: inline;
     background: none;
+	padding: 0 0 0 10px;
 }
 
 h1 {
@@ -182,12 +183,17 @@ h1 {
 	margin: 0;
 	padding: 0;
 }
-#body li {
+.special li {
 	margin: 1em 0;
 	list-style: none;
 	padding: 0 0 0 30px;
 	background: top left url(images/bullet_orange.gif) no-repeat;
 }
+
+#menu li {
+	list-style: none;
+}
+
 #view {
 	float: left;
 	width: 115px;

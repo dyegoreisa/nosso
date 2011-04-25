@@ -10,6 +10,7 @@ class GerenciarMedida extends CI_Controller
     {
         parent::__construct();
 
+        // FIXME: Colocar este dados no banco diferenciando a medida para homens e mulheres
         $this->IMCBase = array(
             'fino'  => 20,
             'médio' => 22.45,
@@ -177,7 +178,9 @@ class GerenciarMedida extends CI_Controller
         $this->load->model('Pessoa');
         $pessoas = $this->Pessoa->getOptionsForDropdown();
 
-        $this->basicform->addDropdown('Tipo: ', 'tipo_dado', 'tipo_dado', NULL, array('peso' => 'Peso', 'imc' => 'IMC'));
+        $formRadio = $this->basicform->addRadio('Tipo: ', 'tipo_dado', 'tipo_dado');
+        $formRadio->addItem('Peso', 'tipo_dado', 'pesoId', 'peso', '', 'peso');
+        $formRadio->addItem('IMC', 'tipo_dado', 'imcId', 'imc', '', NULL);
         $this->basicform->addDropdown('Pessoa: ', 'pessoa_id', 'pessoa_id', NULL, $pessoas);
         $this->basicform->addInput('Data inicio: ', 'data_inicio', 'data_inicio', 'data', NULL);
         $this->basicform->addInput('Data fim: ', 'data_fim', 'data_fim', 'data', NULL);
@@ -239,7 +242,7 @@ class GerenciarMedida extends CI_Controller
             }
             $this->load->view('principal', array(
                 'template' => '/GerenciarMedida/grafico',
-                'titulo'   => 'Gráfico de ' . strtoupper($this->input->post('tipo_dado')),
+                'titulo'   => 'Gráfico de ' . strtoupper($dados['tipo_dado']),
                 'dados'    => $dados
             ));
         }
@@ -267,9 +270,18 @@ class GerenciarMedida extends CI_Controller
             case 'peso': 
                 $this->grafico->setTitulo("Peso - {$pessoa->nome} - {$dataInicioF} à {$dataFimF}");
 
-                $pesoIdeal = $this->pesoIdeal($medidas['peso'], $pessoaId);
+                $metas = $this->makeMetas($pessoaId, $medidas['peso']);
+                $pesoIdeal = $this->pesoIdeal($medidas['peso'], $pessoaId, isset($metas));
+
                 $this->grafico->addElement($pesoIdeal, 'Peso ideal', '#228B22');
                 $this->grafico->addElement($medidas['peso'], 'Peso', '#5B56B6');
+
+                if (isset($metas)) {
+                    $this->grafico->addElement($metas['pesos'], 'Meta', '#EE7600');
+
+                    // FIXME: Adicionar um dia a mais quando a data da meta ainda não foi alcançada.
+                    $medidas['data'][] = $metas['ultimo_dia'];
+                }
                 break;
 
             case 'imc':
@@ -285,8 +297,10 @@ class GerenciarMedida extends CI_Controller
         $this->grafico->render(); 
     }
 
-    private function pesoIdeal($pesos, $pessoaId)
+    private function pesoIdeal($pesos, $pessoaId, $add = FALSE)
     {
+        $add = ($add !== FALSE) ? 1 : 0;
+        
         $this->load->model('Pessoa');
         $tipoOsseo = $this->Pessoa->getTipoOsseoById($pessoaId);
 
@@ -296,7 +310,7 @@ class GerenciarMedida extends CI_Controller
         $pesoIdeal = $this->IMCBase[$tipoOsseo] * ($altura * $altura);
 
         $arrayPesoIdeal = array();
-        for($i = 0; $i < count($pesos); $i++) {
+        for($i = 0; $i < count($pesos) + $add; $i++) {
             $arrayPesoIdeal[$i] = $pesoIdeal;
         }
 
@@ -372,11 +386,36 @@ class GerenciarMedida extends CI_Controller
             if (isset($_POST['id'])) {
                 $id = $this->Meta->atualizar($_POST);
             } else {
-                $id = $this->Meta->inserir($_POST);
+                $id = $this->Meta->inserir($_POST, $this->input->post('pessoa_id'));
             }
-            $this->busca();
+            $this->buscar();
         }
 
+    }
+
+    private function makeMetas($pessoaId, $pesos)
+    { 
+        $qtdePesos = count($pesos);
+        $metaInicio = $pesos[0];
+
+        $this->load->model('Meta');
+        $meta = $this->Meta->getByPessoaId($pessoaId);
+        if (!isset($meta)) {
+            return NULL;
+        }
+        $metaFim = (float)$meta->peso;
+
+        $taxa = ((float)$metaInicio - (float)$metaFim) / (float)$qtdePesos;
+
+        $metas[0] = (float)$metaInicio;
+        for ($i = 1; $i < $qtdePesos; $i++) {
+            $metas[$i] = $metas[$i-1] - $taxa;
+        }
+
+        $metas[0] = $metaInicio;
+        $metas[count($pesos)] = $metaFim;
+        
+        return array('pesos' => $metas, 'ultimo_dia' => $meta->dataBR);
     }
 }
 ?>
