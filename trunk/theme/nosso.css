@@ -183,7 +183,7 @@ h1 {
 	margin: 0;
 	padding: 0;
 }
-.special li {
+.special li, .filtros li {
 	margin: 1em 0;
 	list-style: none;
 	padding: 0 0 0 30px;
