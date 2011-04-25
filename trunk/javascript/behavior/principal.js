@@ -18,9 +18,15 @@ $(document).ready(function() {
         constrainInput: false
     });
 
+    $(".menu_tabs").tabs({
+        cookie: {
+			expires: 1
+		}
+    });
+
     $('input:submit', '.form').button();
     $('a', '#submenu').button();
-    //$('a', '.botoes').button();
+    //$('a', '#menu', 'li', '.botoes').button();
     $('a', '.botoes_principal').button();
 
     $('.botoes #novo').button({

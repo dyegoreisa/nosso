@@ -7,6 +7,7 @@
         <link rel="stylesheet" type="text/css" href="http://<?= $_SERVER['HTTP_HOST']; ?>/theme/nosso.css" />
         <script type="text/javascript" src="http://<?= $_SERVER['HTTP_HOST']; ?>/javascript/jquery-1.5.1.min.js"></script>
         <script type="text/javascript" src="http://<?= $_SERVER['HTTP_HOST']; ?>/javascript/jquery-ui-1.8.11.custom.min.js"></script>
+        <script type="text/javascript" src="http://<?= $_SERVER['HTTP_HOST']; ?>/javascript/jquery.cookie.js"></script>
         <script type="text/javascript" src="http://<?= $_SERVER['HTTP_HOST']; ?>/javascript/livequery/jquery.livequery.js"></script>
         <script type="text/javascript" src="http://<?= $_SERVER['HTTP_HOST']; ?>/javascript/jquery.ui.datepicker-pt-BR.js"></script>
         <script type="text/javascript" src="http://<?= $_SERVER['HTTP_HOST']; ?>/javascript/behavior/principal.js"></script>
@@ -19,7 +20,7 @@
 
         <div id="wrapper">
             
-            <div id="header"><h1>Nosso</h1></div>
+            <div id="header"><a href="/principal"><h1>Nosso</h1></a></div>
             
             <div id="family"></div>
             
@@ -27,10 +28,13 @@
             <div id="head-right"></div>
             
             <div id="nav">
-                <?php $this->menu->render(); ?>
+                <ul></ul>
             </div>
-            
+
             <div id="body"><div class="i">
+                <div id="menu">
+                    <?php $this->menu->render('tabs', 'menu_tabs'); ?>
+                </div>
                 <?php if (isset($template)): ?>
                     <h2 class="shallow"><strong><?= $titulo; ?></strong></h2>
                     <br/>
@@ -56,7 +60,7 @@
                     
                     <h2 class="shallow"><strong>Saúde</strong></h2>
                     <p>
-                    <ul>
+                    <ul class="special">
                         <li><a href="/GerenciarPressaoArterial/editar">Registrar pressão arterial</a></li>
                         <li><a href="/GerenciarMedida/editar">Registrar medida</a></li>
                     </ul>
@@ -66,7 +70,7 @@
                     
                     <h2><strong>Orçamento</strong></h2>
                     <p>
-                    <ul>
+                    <ul class="special">
                         <li><a href="/GerenciarOperacaoContabil/editar">Cadastrar nova conta</a></li>
                         <li><a href="/Relatorio/executar/<?=$dataInicio?>/<?=$dataFim?>">Emitir relatório de contas a pagar deste mês</a></li>
                         

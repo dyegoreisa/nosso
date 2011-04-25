@@ -8,7 +8,7 @@
             <td><?= $meta->dataBR; ?></td>
             <td align="right"><?= $meta->altura; ?></td>
             <td align="right"><?= $meta->peso; ?></td>
-            <td align="center">[ a ] [ x ]</td>
+            <td align="center"><a class="alterar" href="/GerenciarMedida/editarMeta/<?= $meta->id?>" title="Alterar meta">Aletarar Meta</a></td>
         </tr>
     <?php endforeach; ?>
     </table>
