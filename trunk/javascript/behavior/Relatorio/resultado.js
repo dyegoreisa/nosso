@@ -16,11 +16,11 @@ function modal(action, h, w)
     });
 }
 
-function carregarDados(data)
+function carregarDados(data, dataExtra)
 {
     if (data == 'ok') {
         var filtros = $("#filtros_ajax").html()
-        $("#dados").load('/Relatorio/executarAjax/' + filtros);
+        $("#dados").load('/Relatorio/executarAjax/' + filtros + '/' + dataExtra);
         $("#dialog-form").dialog( "close" );
     } else {
         $("#dialog-form").html(data);
@@ -54,5 +54,10 @@ $(document).ready(function() {
         $('#dialog-form').load('/GerenciarOperacaoContabil/editarAjax');
 
         modal('/GerenciarOperacaoContabil/salvarAjax', 340, 350);
+    });
+
+    $('#mostrar_atrasadas').click(function() {
+        var checked = $(this).attr('checked');
+        carregarDados('ok', checked);
     });
 });
