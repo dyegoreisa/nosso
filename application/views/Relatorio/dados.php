@@ -13,7 +13,11 @@
             if ($name == 'valor') {
                 echo '<td align="right">' . number_format($conta->$name, 2, ',', '.') . '</td>';
             } else {
-                echo "<td>{$conta->$name}</td>";
+                if (!empty($atrasadas) && $name == 'vencimento' && isset($conta->atrasada) && $conta->atrasada == 'SIM') {
+                    echo "<td style=\"color:red\">{$conta->$name}</td>";
+                } else {
+                    echo "<td>{$conta->$name}</td>";
+                }
             }
         }
         ?>
@@ -43,7 +47,8 @@
         <td><?= number_format($total['a_pagar']->total + $total['estimativa']->total, 2, ',', '.'); ?></td>
     </tr>
     <tr class="par">
-        <th>Total de contas no período:</th>
+        <?php $msgAtradasas = (empty($atrasadas)) ? '' : ' + contas atrasadas'; ?>
+        <th>Total de contas no período<?= $msgAtradasas; ?>:</th>
         <td><?= number_format($total['pago']->total + $total['a_pagar']->total + $total['estimativa']->total, 2, ',', '.'); ?></td>
     </tr>
     <tr class="impar">

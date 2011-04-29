@@ -9,6 +9,7 @@ class MakeReport
     private $displayFiltros;
     private $regexData;
     private $regexDataBR;
+    private $aPagar;
 
     private $fields;
 
@@ -17,6 +18,12 @@ class MakeReport
         $this->CI =& get_instance();
         $this->regexData   = '/^(0[1-9]|[12][0-9]|3[01])\/(0[1-9]|1[012])\/([12][0-9]{3})$/';
         $this->regexDataBR = '/^([12][0-9]{3})-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])$/';
+        $this->aPagar = FALSE;
+    }
+
+    public function setAPagar($aPagar = FALSE)
+    {
+        $this->aPagar = $aPagar;
     }
 
     public function getFields()
@@ -24,13 +31,16 @@ class MakeReport
         return $this->fields;
     }
 
-    private function getCamposBase()
+    private function getBaseFields()
     {
         $campos = array();
         foreach ($this->fields as $field) {
             $campos[] = $field->getAliasDB();
         }
-        return implode(', ', $campos);
+        $sqlCampos = implode(', ', $campos);
+        $sqlCampos .= ($this->aPagar) ? ", if (MONTH(oc.vencimento) < MONTH(NOW()), 'SIM', 'NÃO') AS atrasada" : '';
+        
+        return $sqlCampos;
     }
 
     private function getFrom()
@@ -83,7 +93,11 @@ class MakeReport
     public function addFiltro($key, $val, $isData = FALSE)
     {
         if ($isData === TRUE) {
-            $this->filtros[$key] = preg_replace($this->regexData, '\3-\2-\1', $val);
+            if ($val == '99/99/9999') {
+                $this->filtros[$key] = '9999-99-99';
+            } else {
+                $this->filtros[$key] = preg_replace($this->regexData, '\3-\2-\1', $val);
+            }
         } else {
             $this->filtros[$key] = $val;
         }
@@ -94,7 +108,7 @@ class MakeReport
         $this->fields[] = new Field($name, $label, $aliasDB, $aliasOrder);
     }
 
-    private function makeWhere()
+    private function makeWhere($ignoreAPagar = FALSE)
     {
         $where = array();
         if (!empty($this->filtros['data_inicio'])) {
@@ -104,7 +118,9 @@ class MakeReport
 
         if (!empty($this->filtros['data_fim'])) {
             $where[] = "oc.vencimento <= '{$this->filtros['data_fim']}'";
-            $this->displayFiltros[] = 'Data fim: ' . preg_replace($this->regexDataBR, '\3/\2/\1', $this->filtros['data_fim']);
+            if ($this->filtros['data_fim'] != '9999-99-99') {
+                $this->displayFiltros[] = 'Data fim: ' . preg_replace($this->regexDataBR, '\3/\2/\1', $this->filtros['data_fim']);
+            }
         }
 
         if (isset($this->filtros['categoria']) && $this->filtros['categoria'] != 0) {
@@ -121,9 +137,12 @@ class MakeReport
             $this->displayFiltros[] = 'Status: ' . $status[0]->nome;
         }
 
-        //$where[] = "toc.nome = 'Saída'";
+        $sqlWhere = empty($where) ? '' : ' (' . implode(' AND ', $where) . ')';
+        if (!$ignoreAPagar) { 
+            $sqlWhere .= ($this->aPagar) ? " OR tsoc.nome = 'A pagar' " : '';
+        }
 
-        return empty($where) ? '' : 'WHERE ' . implode(' AND ', $where);
+        return "WHERE ({$sqlWhere})";
     }
 
     private function execute($sql, $single = FALSE)
@@ -147,7 +166,7 @@ class MakeReport
         {
             case 'contas':
                 $sql = 'SELECT oc.id, oc.tipo_operacao_contabil_id, ' . 
-                       $this->getCamposBase() . 
+                       $this->getBaseFields() . 
                        $this->getFrom() . 
                        $this->makeWhere() . 
                        $this->getOrder();
@@ -159,7 +178,7 @@ class MakeReport
             case 'recebido':
                 $sql = 'SELECT sum(soc.valor) as total' . 
                        $this->getFrom() . 
-                       $this->makeWhere() . 
+                       $this->makeWhere(TRUE) . 
                        "AND tsoc.nome = 'Recebido'";
 
                 $result = $this->execute($sql, TRUE);
@@ -171,7 +190,7 @@ class MakeReport
             case 'pago':
                 $sql = 'SELECT sum(soc.valor) as total' . 
                        $this->getFrom() . 
-                       $this->makeWhere() . 
+                       $this->makeWhere(TRUE) . 
                        "AND tsoc.nome = 'Pago'";
 
                 $result = $this->execute($sql, TRUE);
@@ -195,7 +214,7 @@ class MakeReport
             case 'estimativa':
                 $sql = 'SELECT sum(soc.valor) as total' . 
                        $this->getFrom() . 
-                       $this->makeWhere() . 
+                       $this->makeWhere(TRUE) . 
                        "AND tsoc.nome = 'Estimativa'";
 
                 $result = $this->execute($sql, TRUE);

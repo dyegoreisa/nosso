@@ -18,3 +18,5 @@
 <div id="dados">
 <?php include 'dados.php'; ?>
 </div>
+<br/>
+Mostar contas atrasadas? <input type="checkbox" id="mostrar_atrasadas" name="mostrar_atrasadas" <?= $atrasadas; ?>>
