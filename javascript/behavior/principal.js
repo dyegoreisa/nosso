@@ -6,6 +6,16 @@ $(document).ready(function() {
         }
     });
 
+    $('a.excluirparcelado').click(function() {
+        descricao = $(this).attr('alt');
+        var href = $(this).attr('href');
+        if (confirm('Deseja excluir todas as parcelas relacionadas ao registro de ' +descricao+ '?')) {
+            $(this).attr('href', href+'/1');
+        } else if (false == confirm('Deseja excluir este registro de ' +descricao+ '?')) {
+            return false;
+        }
+    });
+
     $('input.data').datepicker({
         changeMonth: true,
         changeYear: true,
@@ -73,7 +83,7 @@ $(document).ready(function() {
         text: false
     });
 
-    $('a.excluir').button({
+    $('a.excluir, a.excluirparcelado').button({
         icons: {
             primary: "ui-icon-trash"
         },

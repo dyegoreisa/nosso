@@ -14,12 +14,15 @@ class OperacaoContabil extends CI_Model
                 oc.id
                 , oc.tipo_operacao_contabil_id
                 , oc.categoria_operacao_contabil_id
-                , DATE_FORMAT(oc.vencimento, '%d/%m/%Y') as vencimento
+                , DATE_FORMAT(oc.vencimento, '%d/%m/%Y') AS vencimento
+                , oc.vencimento AS venc_order
                 , oc.protocolo
                 , soc.valor
-                , toc.nome as tipo
-                , coc.nome as categoria
-                , tsoc.nome as status
+                , toc.nome AS tipo
+                , coc.nome AS categoria
+                , tsoc.nome AS status
+                , IF(oc.parcelamento_id IS NOT NULL, 'parcelado', '') AS parcelamento
+                , oc.parcelamento_id
             FROM operacao_contabil oc
                 JOIN tipo_operacao_contabil toc ON toc.id = oc.tipo_operacao_contabil_id
                 JOIN categoria_operacao_contabil coc ON coc.id = oc.categoria_operacao_contabil_id
@@ -31,9 +34,10 @@ class OperacaoContabil extends CI_Model
     public function listar($campo = NULL, $ordem = NULL)
     {
         if (isset($campo)) {
+            $campo = ($campo = 'vencimento') ? 'venc_order' : $campo;
             $ordenacao = " ORDER BY {$campo} {$ordem}";
         } else {
-            $ordenacao = ' ORDER BY tipo, categoria';
+            $ordenacao = ' ORDER BY tipo, categoria, venc_order';
         }
 
         $query = $this->db->query($this->sqlBase . $ordenacao);
@@ -58,6 +62,40 @@ class OperacaoContabil extends CI_Model
             'valor'                            => $valor,
             'data_inicio'					   => date('Y-m-d H:i:s')
         ));
+
+        $this->db->trans_complete();
+    }
+
+    public function inserirParcelada(array $dados, $idStatus, $qtde)
+    {
+        $protocolo  = $dados['protocolo'];
+        $vencimento = strtotime(preg_replace($this->regexData, '\3-\2-\1', $dados['vencimento']));
+        $valor      = $dados['valor'];
+
+        unset($dados['valor']);
+
+        $this->db->trans_start();
+
+        for ($i = 1; $i <= $qtde; $i++) {
+            $parcela = $i - 1;
+            $dados['protocolo']  = "$protocolo (Parcela ({$i}/{$qtde})";
+            $dados['vencimento'] = date('Y-m-d', strtotime("+{$parcela} Month", $vencimento));
+            $this->db->insert('operacao_contabil', $dados);
+            if (!isset($id) || empty($id)) {
+                $id = $this->db->insert_id();
+                $dados['parcelamento_id'] = md5($id);
+                $this->db->where('id', $id);
+                $this->db->update('operacao_contabil', array('parcelamento_id' => $dados['parcelamento_id']));
+            } else {
+                $id = $this->db->insert_id();
+            }
+            $this->db->insert('status_operacao_contabil', array(
+                'operacao_contabil_id'             => $id,
+                'tipo_status_operacao_contabil_id' => $idStatus,
+                'valor'                            => $valor,
+                'data_inicio'					   => date('Y-m-d H:i:s')
+            ));
+        }
 
         $this->db->trans_complete();
     }
@@ -115,6 +153,20 @@ class OperacaoContabil extends CI_Model
     public function excluir($id)
     {
         $this->db->delete('operacao_contabil', array('id' => $id));
+    }
+
+    public function excluirTodasParcelas($id)
+    {
+        $operacaoContabil = $this->getById($id);
+
+        $this->db->query("
+            delete operacao_contabil, status_operacao_contabil
+            from operacao_contabil, status_operacao_contabil
+            where status_operacao_contabil.operacao_contabil_id = operacao_contabil.id
+                and status_operacao_contabil.data_fim is null
+                and status_operacao_contabil.tipo_status_operacao_contabil_id <> 2
+                and operacao_contabil.parcelamento_id = ?
+        ", array($operacaoContabil->parcelamento_id));
     }
 }
 ?>

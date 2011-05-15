@@ -22,7 +22,7 @@ class Acoes
         return FALSE;
     }
 
-    public function render($id, $descricao = '')
+    public function render($id, $descricao = '', $appendClass = '')
     {
         foreach ($this->itens as $item) {
             $alt   = '';
@@ -30,6 +30,7 @@ class Acoes
 
 			if ($this->hasExcluir($class) == TRUE) {
 				$alt = " alt=\"{$descricao}\"";
+                $class .= $appendClass;
 			}
             
             if (isset($class)) {
