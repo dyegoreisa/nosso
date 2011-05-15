@@ -4,19 +4,10 @@ class GerenciarMedida extends CI_Controller
 {
     private $metas;
     private $medidas;
-    private $IMCBase;
     
     public function __construct()
     {
         parent::__construct();
-
-        // FIXME: Colocar este dados no banco diferenciando a medida para homens e mulheres
-        $this->IMCBase = array(
-            'fino'  => 20,
-            'médio' => 22.45,
-            'largo' => 24.9
-        );
-
 
         // SubMenu
         $this->submenu->addItem('Novo', '/GerenciarMedida/editar', 'novo');
@@ -302,16 +293,14 @@ class GerenciarMedida extends CI_Controller
         $add = ($add !== FALSE) ? 1 : 0;
         
         $this->load->model('Pessoa');
-        $tipoOsseo = $this->Pessoa->getTipoOsseoById($pessoaId);
-
-        $this->load->model('Medida');
-        $altura    = $this->Medida->getAlturaById($pessoaId);
+        $pessoa = $this->Pessoa->getById($pessoaId);
         
-        $pesoIdeal = $this->IMCBase[$tipoOsseo] * ($altura * $altura);
+        $this->load->model('baseIMC');
+        $pesoIdeal = $this->baseIMC->getPesoIdeal($pessoa->sexo, $pessoa->tipo_osseo, $pessoa->altura);
 
         $arrayPesoIdeal = array();
         for($i = 0; $i < count($pesos) + $add; $i++) {
-            $arrayPesoIdeal[$i] = $pesoIdeal;
+            $arrayPesoIdeal[$i] = (float)$pesoIdeal;
         }
 
         return $arrayPesoIdeal;
@@ -320,11 +309,14 @@ class GerenciarMedida extends CI_Controller
     private function imcIdeal($IMCs, $pessoaId)
     {
         $this->load->model('Pessoa');
-        $tipoOsseo = $this->Pessoa->getTipoOsseoById($pessoaId);
+        $pessoa = $this->Pessoa->getById($pessoaId);
+
+        $this->load->model('baseIMC');
+        $IMCIdeal  = $this->baseIMC->getIMCIdeal($pessoa->sexo, $pessoa->tipo_osseo);
 
         $arrayImcIdeal = array();
         for($i = 0; $i < count($IMCs); $i++) {
-            $arrayImcIdeal[$i] = $this->IMCBase[$tipoOsseo];
+            $arrayImcIdeal[$i] = (float)$IMCIdeal;
         }
 
         return $arrayImcIdeal;

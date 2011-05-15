@@ -35,7 +35,27 @@ class Pessoa extends CI_Model
 
     public function getById($id)
     {
-        $query = $this->db->get_where('pessoa', array('id' => $id));
+        $query = $this->db->query("
+            SELECT 
+                p.id
+                , p.nome
+                , p.sobrenome
+                , p.sexo
+                , p.tipo_osseo
+                , m.peso
+                , m.altura
+            FROM pessoa p
+                LEFT JOIN (SELECT 
+                        m.pessoa_id
+                        , m.altura
+                        , m.peso 
+                      FROM medida m 
+                      WHERE pessoa_id = ?
+                      ORDER BY id DESC 
+                      LIMIT 1) m ON m.pessoa_id = p.id
+            WHERE p.id = ?
+        ", array($id, $id));
+
         $pessoa = $query->result();
         return $pessoa[0];
     }
