@@ -77,7 +77,12 @@ foreach ($this->basicform->getItens() as $item) {
             $checked = set_checkbox($item->getName(), '1');
             $checked = empty($checked) ? $item->isChecked() : TRUE;
             echo form_label($item->getLabel(), $item->getId());
-            echo form_checkbox($item->getName(), $item->getValue());
+            $dados = array(
+                'name'  => $item->getName(),
+                'id'    => $item->getId(),
+                'value' => $item->getValue()
+            );
+            echo form_checkbox($dados);
             break;
 
         case 'hidden':

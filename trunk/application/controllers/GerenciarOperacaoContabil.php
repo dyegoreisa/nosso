@@ -43,7 +43,7 @@ class GerenciarOperacaoContabil extends CI_Controller
         $this->load->library('BasicForm');
 
         $nome = $sobrenome = $sexo = NULL;
-        if(isset($id) && !empty($id)) {
+        if (isset($id) && !empty($id)) {
             $this->load->model('OperacaoContabil');
             $operacaoContabil = $this->OperacaoContabil->getById($id);
             $titulo = "Alterar cadastro da conta {$operacaoContabil->categoria}";
@@ -65,11 +65,15 @@ class GerenciarOperacaoContabil extends CI_Controller
         $this->basicform->addDropdown('Categoria: ', 'categoria_operacao_contabil_id', 'categoria_operacao_contabil_id',
             isset($operacaoContabil) ? $operacaoContabil->categoria_operacao_contabil_id: NULL, $categoriaOpcoes);
 
+        if (!isset($id) || empty($id)) {
+            $this->basicform->addCheckbox('Conta parcelada: ', 'parcelada', 'parcelada', 1, '');
+        }
+
         $this->basicform->addInput('Valor: ', 'valor', 'valor', '', isset($operacaoContabil) ? $operacaoContabil->valor : NULL);
         $this->basicform->addInput('Vencimento: ', 'vencimento', 'vencimento', 'data', isset($operacaoContabil) ? $operacaoContabil->vencimento : NULL);
         $this->basicform->addInput('Protocolo: ', 'protocolo', 'protocolo', '', isset($operacaoContabil) ? $operacaoContabil->protocolo : NULL);
 
-        if(!isset($id) || empty($id)) {
+        if (!isset($id) || empty($id)) {
             $this->basicform->addCheckbox('Estimativa: ', 'estimativa', 'estimativa', 1, '');
         }
 
@@ -82,6 +86,7 @@ class GerenciarOperacaoContabil extends CI_Controller
             $this->load->view('principal', array(
                 'template' => 'form',
                 'titulo'   => $titulo,
+                'js'       => array(TRUE, 'OperacaoContabil/editar'),
                 'dados'    => array(
                     'action' => '/GerenciarOperacaoContabil/salvar',
                     'submit' => 'Salvar',
@@ -99,6 +104,8 @@ class GerenciarOperacaoContabil extends CI_Controller
 
     public function salvar()
     {
+        $dados      = $_POST;
+
         $this->load->library('form_validation');
 
         $this->form_validation->set_rules('tipo_operacao_contabil_id', 'Tipo', 'required');
@@ -116,25 +123,34 @@ class GerenciarOperacaoContabil extends CI_Controller
             $this->load->model('OperacaoContabil');
             $this->load->model('TipoStatusOperacaoContabil');
 
-            if (isset($_POST['id'])) {
-                $this->OperacaoContabil->atualizar($_POST);
+            if (isset($dados['id'])) {
+                $this->OperacaoContabil->atualizar($dados);
             } else {
                 $this->load->model('TipoOperacaoContabil');
 
-                if ($_POST['tipo_operacao_contabil_id'] === $this->TipoOperacaoContabil->getIdByName('Saída')) {
-                    if (isset($_POST['estimativa']) && $_POST['estimativa'] == 1) {
+                if ($dados['tipo_operacao_contabil_id'] === $this->TipoOperacaoContabil->getIdByName('Saída')) {
+                    if (isset($dados['estimativa']) && $dados['estimativa'] == 1) {
                         $status = 'Estimativa';
-                        unset($_POST['estimativa']);
+                        unset($dados['estimativa']);
                     } else {
                         $status = 'A pagar';
                     }
                 } else {
                     $status = 'A receber';
-                    unset($_POST['estimativa']);
+                    unset($dados['estimativa']);
                 }
 
                 $idTipoStatusOperacaoContabil = $this->TipoStatusOperacaoContabil->getIdByName($status);
-                $this->OperacaoContabil->inserir($_POST, $idTipoStatusOperacaoContabil);
+                if (isset($dados['qtde_parcelas']) && !empty($dados['qtde_parcelas'])) {
+                    $qtdeParcelas  = $dados['qtde_parcelas'];
+
+                    unset($dados['qtde_parcelas']);
+                    unset($dados['parcelada']);
+
+                    $this->OperacaoContabil->inserirParcelada($dados, $idTipoStatusOperacaoContabil, $qtdeParcelas); 
+                } else {
+                    $this->OperacaoContabil->inserir($dados, $idTipoStatusOperacaoContabil);
+                }
             }
 
             if (isset($this->ajax) && $this->ajax === TRUE) {
@@ -143,7 +159,6 @@ class GerenciarOperacaoContabil extends CI_Controller
                 $this->listar();
             }
         }
-
     }
 
     public function listar($campo = NULL, $ordem = NULL)
@@ -205,7 +220,15 @@ class GerenciarOperacaoContabil extends CI_Controller
     public function excluir($id)
     {
         $this->load->model('OperacaoContabil');
-        $this->OperacaoContabil->excluir($id);
+
+        // Pega o terceiro paramentro opcional para excluir todas as parcelas baseado na parcela informada
+        $apagarParceladas = (func_num_args() == 3) ? (bool)func_get_arg(2) : FALSE;
+
+        if ($apagarParceladas) {
+            $this->OperacaoContabil->excluirTodasParcelas($id);
+        } else {
+            $this->OperacaoContabil->excluir($id);
+        }
         $this->listar();
     }
 

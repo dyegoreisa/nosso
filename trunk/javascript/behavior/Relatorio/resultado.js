@@ -2,7 +2,7 @@ function modal(action, h, w)
 {
     var h = h;
     var w = w;
-    $("#dialog-form").dialog({
+    $("#dialog").dialog({
         height: h,
         width: w,
         modal: true,
@@ -11,8 +11,8 @@ function modal(action, h, w)
                 $.post(action, $('.formulario').serialize(), function(data) {
                     carregarDados(data);
                 });
-            },
-        },
+            }
+        }
     });
 }
 
@@ -21,18 +21,18 @@ function carregarDados(data, dataExtra)
     if (data == 'ok') {
         var filtros = $("#filtros_ajax").html()
         $("#dados").load('/Relatorio/executarAjax/' + filtros + '/' + dataExtra);
-        $("#dialog-form").dialog( "close" );
+        $("#dialog").dialog( "close" );
     } else {
-        $("#dialog-form").html(data);
+        $("#dialog").html(data);
     }
 }
 
 function mudarTitulo(titulo)
 {
-    if ($('#ui-dialog-title-dialog-form').html() == null) {
-        $('#dialog-form').attr('title', titulo);
+    if ($('#ui-dialog-title-dialog').html() == null) {
+        $('#dialog').attr('title', titulo);
     } else {
-        $('#ui-dialog-title-dialog-form').html(titulo);
+        $('#ui-dialog-title-dialog').html(titulo);
     }
 }
 
@@ -43,7 +43,7 @@ $(document).ready(function() {
 
         mudarTitulo('Alterar status da conta');
 
-        $('#dialog-form').load('/GerenciarOperacaoContabil/selecionarStatusAjax/' + idOperacao + '/' + idTipoOperacao);
+        $('#dialog').load('/GerenciarOperacaoContabil/selecionarStatusAjax/' + idOperacao + '/' + idTipoOperacao);
 
         modal('/GerenciarOperacaoContabil/alterarStatusAjax', 255, 350);
     });
@@ -51,7 +51,7 @@ $(document).ready(function() {
     $('#novo').click(function() {
         mudarTitulo('Cadastrar nova conta');
 
-        $('#dialog-form').load('/GerenciarOperacaoContabil/editarAjax');
+        $('#dialog').load('/GerenciarOperacaoContabil/editarAjax');
 
         modal('/GerenciarOperacaoContabil/salvarAjax', 340, 350);
     });
