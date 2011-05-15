@@ -62,6 +62,18 @@ class GerenciarPessoa extends CI_Controller
             $formRadioImage->addItem("{$key}_{$sexoImagem}", 'tipo_osseo', "{$tipoOsseo}Id", strtolower($tipoOsseo), '', isset($pessoa) ? $pessoa->tipo_osseo : NULL);
         }
 
+        if(isset($id) && !empty($id)) {
+            $this->load->model('baseIMC');
+            $pesoIdeal = $this->baseIMC->getPesoIdeal($pessoa->sexo, $pessoa->tipo_osseo, $pessoa->altura);
+            $IMCIdeal  = $this->baseIMC->getIMCIdeal($pessoa->sexo, $pessoa->tipo_osseo);
+
+            if ($pesoIdeal != '0,0') {
+                $this->basicform->addLabel("Seu peso ideal é {$pesoIdeal} Kg", '');
+            }
+            $this->basicform->addLabel("Seu IMC ideal é {$IMCIdeal}", '');
+        }
+
+
         $this->load->view('principal', array(
             'template' => 'form',
             'titulo'   => $titulo,
