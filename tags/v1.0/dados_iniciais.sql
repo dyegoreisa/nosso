@@ -1,0 +1,1 @@
+INSERT INTO `base_imc` VALUES (13,'Masculino','fino',20),(14,'Masculino','mÃ©dio',22.45),(15,'Masculino','largo',24.9),(16,'Feminino','fino',19),(17,'Feminino','mÃ©dio',21.45),(18,'Feminino','largo',23.9);

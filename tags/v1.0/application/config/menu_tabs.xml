@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<menu>
+    <item>
+        <label>Pessoa</label>
+        <link>/GerenciarPessoa</link>
+    </item>
+	<item>
+		<label>Orçamento</label>
+		<link>#</link>
+		<submenu>
+			<item>
+				<label>Conta</label>
+				<link>/GerenciarOperacaoContabil</link>
+			</item>
+            <item>
+                <label>Relatorio</label>
+                <link>/Relatorio</link>
+            </item>
+		</submenu>
+	</item>
+    <item>
+        <label>Saúde</label>
+        <link>#</link>
+		<submenu>
+			<item>
+				<label>Medida</label>
+				<link>/GerenciarMedida</link>
+			</item>
+			<item>
+				<label>Pressão Arterial</label>
+				<link>/GerenciarPressaoArterial</link>
+			</item>
+		</submenu>
+    </item>
+</menu>
