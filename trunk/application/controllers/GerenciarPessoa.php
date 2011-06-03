@@ -33,12 +33,18 @@ class GerenciarPessoa extends CI_Controller
 
         $this->load->helper('html');
         $this->load->helper('form');
+        $this->load->helper('file');
         $this->load->library('BasicForm');
 
-        $nome = $sobrenome = $sexo = NULL;
+        $imagemId = $nome = $sobrenome = $sexo = NULL;
         if(isset($id) && !empty($id)) {
             $this->load->model('Pessoa');
-            $pessoa = $this->Pessoa->getById($id);
+            $this->load->model('Imagem');
+
+            $pessoa   = $this->Pessoa->getById($id);
+            $imagem   = $this->Imagem->getById($pessoa->imagem_id);
+            $imagemId = (isset($imagem)) ? "/GerenciarPessoa/foto/{$imagem->id}" : NULL;
+
             $titulo = "Alterar cadastro de {$pessoa->nome}";
         } else {
             $titulo = 'Novo cadastro de pessoa';
@@ -62,6 +68,8 @@ class GerenciarPessoa extends CI_Controller
             $formRadioImage->addItem("{$key}_{$sexoImagem}", 'tipo_osseo', "{$tipoOsseo}Id", strtolower($tipoOsseo), '', isset($pessoa) ? $pessoa->tipo_osseo : NULL);
         }
 
+        $this->basicform->addImagemFile('Foto: ', 'foto', 'foto', '', $imagemId);
+
         if(isset($id) && !empty($id)) {
             $this->load->model('baseIMC');
             $pesoIdeal = $this->baseIMC->getPesoIdeal($pessoa->sexo, $pessoa->tipo_osseo, $pessoa->altura);
@@ -80,6 +88,7 @@ class GerenciarPessoa extends CI_Controller
             'dados'    => array(
                 'action' => '/GerenciarPessoa/salvar',
                 'submit' => 'Salvar',
+                'file'   => TRUE,
                 'id'     => $id
             )
         ));
@@ -96,11 +105,20 @@ class GerenciarPessoa extends CI_Controller
         if ($this->form_validation->run() === FALSE) {
             $this->editar();
         } else {
+            $this->load->model('Imagem');
             $this->load->model('Pessoa');
 
+
             if (isset($_POST['id'])) {
+                if ($_FILES['foto']['size'] != 0) {
+                    $imagemId = $this->Pessoa->getImagemIdById($_POST['id']);
+                    $_POST['imagem_id'] = $this->Imagem->alterar($_FILES['foto'], $imagemId);
+                }
                 $this->Pessoa->atualizar($_POST);
             } else {
+                if ($_FILES['foto']['size'] != 0) {
+                    $_POST['imagem_id'] = $this->Imagem->alterar($_FILES['foto']);
+                }
                 $this->Pessoa->inserir($_POST);
             }
             $this->listar();
@@ -164,8 +182,23 @@ class GerenciarPessoa extends CI_Controller
     public function excluir($id)
     {
         $this->load->model('Pessoa');
+        $this->load->model('Imagem');
+
+        $pessoa   = $this->Pessoa->getById($id);
+        $imagemId = $pessoa->imagem_id;
+
         $this->Pessoa->excluir($id);
+        $this->Imagem->excluir($imagemId);
+
         $this->listar();
+    }
+
+    public function foto($imagemId)
+    {
+        $this->load->model('Imagem');
+        $imagem = $this->Imagem->getById($imagemId);
+        header("Content-type: {$imagem->mime_type}");
+        echo $imagem->imagem;
     }
 }
 ?>
