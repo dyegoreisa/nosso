@@ -118,5 +118,11 @@ class Medida extends CI_Model
         $medida = $query->result();
         return (float)$medida[0]->altura;
     }
+
+    public function getImagemIdById($id)
+    {
+        $medida = $this->getById($id);
+        return $medida->imagem_id;
+    }
 }
 ?>

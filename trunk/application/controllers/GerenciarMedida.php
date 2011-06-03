@@ -34,12 +34,18 @@ class GerenciarMedida extends CI_Controller
         }
 
         $this->load->helper('form');
+        $this->load->helper('file');
         $this->load->library('BasicForm');
 
-        $medida = NULL;
+        $mostrarImagem = $medida = NULL;
         if(isset($id) && !empty($id)) {
             $this->load->model('Medida');
-            $medida = $this->Medida->getById($id);
+            $this->load->model('Imagem');
+
+            $medida        = $this->Medida->getById($id);
+            $imagem        = $this->Imagem->getById($medida->imagem_id);
+            $mostrarImagem = (isset($imagem)) ? "/GerenciarImagem/mostrar/{$imagem->id}" : NULL;
+
             $titulo = 'Alterar Medida';
         } else {
             $titulo = 'Registrar Medida';
@@ -52,6 +58,7 @@ class GerenciarMedida extends CI_Controller
         $this->basicform->addInput('Data: ', 'data', 'data', 'data', isset($medida) ? $medida->data: date('d/m/Y'));
         $this->basicform->addInput('Altura: ', 'altura', 'altura', '', isset($medida) ? $medida->altura : NULL);
         $this->basicform->addInput('Peso: ', 'peso', 'peso', '', isset($medida) ? $medida->peso : NULL);
+        $this->basicform->addImagemFile('Foto: ', 'foto', 'foto', '', $mostrarImagem);
 
         $this->load->view('principal', array(
             'template' => 'form',
@@ -59,6 +66,7 @@ class GerenciarMedida extends CI_Controller
             'dados'    => array(
                 'action' => '/GerenciarMedida/salvar',
                 'submit' => 'Salvar',
+                'file'   => TRUE,
                 'id'     => $id
             )
         ));
@@ -77,10 +85,18 @@ class GerenciarMedida extends CI_Controller
             $this->editar();
         } else {
             $this->load->model('Medida');
+            $this->load->model('Imagem');
 
             if (isset($_POST['id'])) {
+                if ($_FILES['foto']['size'] != 0) {
+                    $imagemId = $this->Medida->getImagemIdById($_POST['id']);
+                    $_POST['imagem_id'] = $this->Imagem->alterar($_FILES['foto'], $imagemId);
+                }
                 $id = $this->Medida->atualizar($_POST);
             } else {
+                if ($_FILES['foto']['size'] != 0) {
+                    $_POST['imagem_id'] = $this->Imagem->alterar($_FILES['foto']);
+                }
                 $id = $this->Medida->inserir($_POST);
             }
             $this->efetuarBusca($id);
@@ -157,7 +173,14 @@ class GerenciarMedida extends CI_Controller
     public function excluir($id)
     {
         $this->load->model('Medida');
+        $this->load->model('Imagem');
+
+        $pessoa   = $this->Pessoa->getById($id);
+        $imagemId = $pessoa->imagem_id;
+
         $this->Medida->excluir($id);
+        $this->Imagem->excluir($imagemId);
+
         $this->buscar();
     }
 
