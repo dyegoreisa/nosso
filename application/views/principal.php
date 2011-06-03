@@ -35,7 +35,15 @@
                     </div>
                     <br/>
                     <fieldset id="fieldset_main">
-                        <?php $this->load->view($template, $dados); ?>
+                        <?php 
+                            if ($template == 'form') {
+                                $id       = (isset($dados['id']))    ? $dados['id']    : FALSE;
+                                $multpart = (isset($dados['file']))  ? TRUE            : FALSE;
+                                $class    = (isset($dados['class'])) ? $dados['class'] : FALSE;
+                                $this->basicform->render($dados['action'], $dados['submit'], $class, $id, $multpart);
+                            } else {
+                                $this->load->view($template, $dados); 
+                            }?>
                     </fieldset>
                     </p>
                 <?php else: ?>

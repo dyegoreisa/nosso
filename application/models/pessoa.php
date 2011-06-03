@@ -23,6 +23,7 @@ class Pessoa extends CI_Model
     public function inserir(array $dados)
     {
         $this->db->insert('pessoa', $dados);
+        return $this->db->insert_id();
     }
 
     public function atualizar(array $dados)
@@ -31,6 +32,7 @@ class Pessoa extends CI_Model
         unset($dados['id']);
         $this->db->where('id', $id);
         $this->db->update('pessoa', $dados);
+        return $id;
     }
 
     public function getById($id)
@@ -42,6 +44,7 @@ class Pessoa extends CI_Model
                 , p.sobrenome
                 , p.sexo
                 , p.tipo_osseo
+                , p.imagem_id
                 , m.peso
                 , m.altura
             FROM pessoa p
@@ -92,5 +95,10 @@ class Pessoa extends CI_Model
         return $pessoa->tipo_osseo;
     }
 
+    public function getImagemIdById($id)
+    {
+        $pessoa = $this->getById($id);
+        return $pessoa->imagem_id;
+    }
 }
 ?>

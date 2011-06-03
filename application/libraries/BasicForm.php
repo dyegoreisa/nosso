@@ -1,6 +1,7 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 require_once 'application/libraries/ItemForm.php';
+require_once 'application/libraries/RenderBasicForm.php';
 
 class BasicForm
 {
@@ -25,7 +26,7 @@ class BasicForm
 
     public function addRadioImage($image, $name, $id)
     {
-        $item = new ItemForm($image, $name, $id, '', '', NULL, 'radio_image');
+        $item = new ItemForm($image, $name, $id, '', '', NULL, 'radioImage');
         $this->itens[] = $item;
         return $item;
     }
@@ -49,9 +50,27 @@ class BasicForm
         $this->itens[] = new ItemForm('', $name, '', $value, '', '', 'hidden');
     }
 
+    public function addImagemFile($label, $name, $id, $class, $imagem)
+    {
+        $this->itens[] = new ItemForm($label, $name, $id, $imagem, $class, NULL, 'imageFile', '200');
+    }
+
     public function getItens()
     {
         return $this->itens;
+    }
+
+    public function render($action, $submit, $class, $id, $multpart)
+    {
+        $render = new RenderBasicForm($action, $submit, $class, $id, $multpart);
+        $render->printHeader();
+        foreach ($this->getItens() as $item) {
+            $method = $item->getType();
+            $method = 'print' . ucfirst($method);
+            $reflectionMethod = new ReflectionMethod('RenderBasicForm', $method);
+            $reflectionMethod->invokeArgs($render, array($item));
+        }
+        $render->printFooter();
     }
 }
 

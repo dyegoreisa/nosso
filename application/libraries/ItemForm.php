@@ -9,23 +9,29 @@ class ItemForm
     private $class;
     private $checked;
     private $type;
+    /**
+     * Este campo pode ser usado para colocar qualquer valor para qualquer finalidade
+     * 
+     * @var mixed
+     * @access private
+     */
+    private $tag;
 
     private $itens;
 
-    public function __construct($label, $name, $id, $value, $class, $checked, $type)
+    public function __construct($label, $name, $id, $value, $class, $checked, $type, $tag = NULL)
     {
         $this->label   = $label;
         $this->name    = $name;
         $this->id      = $id;
         $this->value   = $value;
         $this->class   = $class;
-        $this->checked = (!empty($checked) && $checked == $this->value) ? 
-            $this->checked = TRUE:
-            $this->checked = FALSE;
+        $this->checked = (!empty($checked) && $checked == $this->value) ? TRUE : FALSE;
         $this->type    = $type;
+        $this->tag     = $tag;
     }
 
-    public function addItem($label, $name, $id, $value, $class, $checked = null, $type = null)
+    public function addItem($label, $name, $id, $value, $class, $checked = NULL, $type = NULL, $tag = NULL)
     {
         $this->itens[] = new ItemForm($label, $name, $id, $value, $class, $checked, $type);
     }
@@ -51,6 +57,11 @@ class ItemForm
 
     public function getType() {
         return $this->type;
+    }
+
+    public function getTag()
+    {
+        return $this->tag;
     }
 
     public function getArrayAttr()

@@ -1,6 +1,6 @@
 -- MySQL dump 10.13  Distrib 5.1.41, for debian-linux-gnu (i486)
 --
--- Host: localhost    Database: nosso
+-- Host: localhost    Database: nosso_dev
 -- ------------------------------------------------------
 -- Server version	5.1.41-3ubuntu12.10-log
 
@@ -28,7 +28,7 @@ CREATE TABLE `base_imc` (
   `tipo_osseo` enum('fino','médio','largo') NOT NULL,
   `imc` float NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -46,6 +46,22 @@ CREATE TABLE `categoria_operacao_contabil` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Table structure for table `imagem`
+--
+
+DROP TABLE IF EXISTS `imagem`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `imagem` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `imagem` longblob NOT NULL,
+  `mime_type` varchar(45) NOT NULL,
+  `data_atualizacao` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `medida`
 --
 
@@ -55,13 +71,16 @@ DROP TABLE IF EXISTS `medida`;
 CREATE TABLE `medida` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `pessoa_id` int(10) unsigned NOT NULL,
+  `imagem_id` int(10) unsigned DEFAULT NULL,
   `data` date NOT NULL,
   `altura` float DEFAULT NULL,
   `peso` float DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `fk_medida_1` (`pessoa_id`),
-  CONSTRAINT `fk_medida_1` FOREIGN KEY (`pessoa_id`) REFERENCES `pessoa` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=latin1;
+  KEY `fk_medida_2` (`imagem_id`),
+  CONSTRAINT `fk_medida_1` FOREIGN KEY (`pessoa_id`) REFERENCES `pessoa` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `fk_medida_2` FOREIGN KEY (`imagem_id`) REFERENCES `imagem` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -72,15 +91,15 @@ DROP TABLE IF EXISTS `meta`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `meta` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `id` int(10) unsigned NOT NULL,
   `pessoa_id` int(10) unsigned NOT NULL,
   `data` date NOT NULL,
   `altura` float NOT NULL,
   `peso` float NOT NULL,
   PRIMARY KEY (`id`),
-  KEY `fk_meta_1` (`pessoa_id`),
-  CONSTRAINT `fk_meta_1` FOREIGN KEY (`pessoa_id`) REFERENCES `pessoa` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
+  KEY `fk_meta_peso_1` (`pessoa_id`),
+  CONSTRAINT `fk_meta_peso_1` FOREIGN KEY (`pessoa_id`) REFERENCES `pessoa` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -94,6 +113,7 @@ CREATE TABLE `operacao_contabil` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `tipo_operacao_contabil_id` int(10) unsigned NOT NULL,
   `categoria_operacao_contabil_id` int(10) NOT NULL,
+  `parcelamento_id` char(32) DEFAULT NULL,
   `vencimento` date NOT NULL,
   `protocolo` varchar(45) DEFAULT NULL,
   PRIMARY KEY (`id`),
@@ -101,7 +121,7 @@ CREATE TABLE `operacao_contabil` (
   KEY `fk_operacao_contabil_1` (`categoria_operacao_contabil_id`),
   CONSTRAINT `fk_operacao_contabil_1` FOREIGN KEY (`categoria_operacao_contabil_id`) REFERENCES `categoria_operacao_contabil` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `fk_operacao_contabil_3` FOREIGN KEY (`tipo_operacao_contabil_id`) REFERENCES `tipo_operacao_contabil` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=165 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -113,12 +133,15 @@ DROP TABLE IF EXISTS `pessoa`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `pessoa` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `imagem_id` int(10) unsigned DEFAULT NULL,
   `nome` varchar(45) NOT NULL,
   `sobrenome` varchar(45) DEFAULT NULL,
   `sexo` enum('Masculino','Feminino') NOT NULL,
   `tipo_osseo` enum('fino','médio','largo') NOT NULL DEFAULT 'largo',
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=latin1;
+  PRIMARY KEY (`id`),
+  KEY `fk_pessoa_1` (`imagem_id`),
+  CONSTRAINT `fk_pessoa_1` FOREIGN KEY (`imagem_id`) REFERENCES `imagem` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -140,7 +163,7 @@ CREATE TABLE `pressao_arterial` (
   PRIMARY KEY (`id`),
   KEY `fk_pressao_arterial_1` (`pessoa_id`),
   CONSTRAINT `fk_pressao_arterial_1` FOREIGN KEY (`pessoa_id`) REFERENCES `pessoa` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -162,7 +185,7 @@ CREATE TABLE `status_operacao_contabil` (
   KEY `fk_status_operacao_contabil_3` (`tipo_status_operacao_contabil_id`),
   CONSTRAINT `fk_status_operacao_contabil_2` FOREIGN KEY (`operacao_contabil_id`) REFERENCES `operacao_contabil` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `fk_status_operacao_contabil_3` FOREIGN KEY (`tipo_status_operacao_contabil_id`) REFERENCES `tipo_status_operacao_contabil` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=205 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -224,4 +247,4 @@ CREATE TABLE `usuario` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2011-05-13 18:26:46
+-- Dump completed on 2011-06-02 21:02:23
