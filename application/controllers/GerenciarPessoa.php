@@ -36,14 +36,14 @@ class GerenciarPessoa extends CI_Controller
         $this->load->helper('file');
         $this->load->library('BasicForm');
 
-        $imagemId = $nome = $sobrenome = $sexo = NULL;
+        $mostrarImagem = $nome = $sobrenome = $sexo = NULL;
         if(isset($id) && !empty($id)) {
             $this->load->model('Pessoa');
             $this->load->model('Imagem');
 
-            $pessoa   = $this->Pessoa->getById($id);
-            $imagem   = $this->Imagem->getById($pessoa->imagem_id);
-            $imagemId = (isset($imagem)) ? "/GerenciarPessoa/foto/{$imagem->id}" : NULL;
+            $pessoa        = $this->Pessoa->getById($id);
+            $imagem        = $this->Imagem->getById($pessoa->imagem_id);
+            $mostrarImagem = (isset($imagem)) ? "/GerenciarImagem/mostrar/{$imagem->id}" : NULL;
 
             $titulo = "Alterar cadastro de {$pessoa->nome}";
         } else {
@@ -68,7 +68,7 @@ class GerenciarPessoa extends CI_Controller
             $formRadioImage->addItem("{$key}_{$sexoImagem}", 'tipo_osseo', "{$tipoOsseo}Id", strtolower($tipoOsseo), '', isset($pessoa) ? $pessoa->tipo_osseo : NULL);
         }
 
-        $this->basicform->addImagemFile('Foto: ', 'foto', 'foto', '', $imagemId);
+        $this->basicform->addImagemFile('Foto: ', 'foto', 'foto', '', $mostrarImagem);
 
         if(isset($id) && !empty($id)) {
             $this->load->model('baseIMC');
@@ -191,14 +191,6 @@ class GerenciarPessoa extends CI_Controller
         $this->Imagem->excluir($imagemId);
 
         $this->listar();
-    }
-
-    public function foto($imagemId)
-    {
-        $this->load->model('Imagem');
-        $imagem = $this->Imagem->getById($imagemId);
-        header("Content-type: {$imagem->mime_type}");
-        echo $imagem->imagem;
     }
 }
 ?>
