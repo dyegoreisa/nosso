@@ -12,8 +12,14 @@ class Relatorio extends CI_Controller
     public function index()
     {
         $this->load->helper('form');
+        $this->load->helper('data');
         $this->load->library('BasicForm');
 
+        $inicioFimMesCorrente = dataInicioFimMesCorrente();
+        $dataInicio = $inicioFimMesCorrente['dataInicio'];
+        $dataFim    = $inicioFimMesCorrente['dataFim'];
+
+        $this->basicform->addLabel("<a href=\"/Relatorio/executar/{$dataInicio}/{$dataFim}\">Clique aqui para emitir o relatório do mês atual</a>", '');
         $this->basicform->addInput('Data Incial: ', 'data_inicio', 'data_inicio', 'data', '');
         $this->basicform->addInput('Data Final: ', 'data_fim', 'data_fim', 'data', '');
         $this->basicform->addCheckbox('Mostrar contar atrasadas?: ', 'mostrar_atrasadas', 'mostrar_atrasadas', TRUE, '');
