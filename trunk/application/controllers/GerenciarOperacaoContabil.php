@@ -22,7 +22,7 @@ class GerenciarOperacaoContabil extends CI_Controller
 
     public function index()
     {
-        $this->listar();
+        $this->buscar();
     }
 
     public function editarAjax($id = NULL)
