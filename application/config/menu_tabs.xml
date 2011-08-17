@@ -30,6 +30,10 @@
 				<label>Pressão Arterial</label>
 				<link>/GerenciarPressaoArterial</link>
 			</item>
+			<item>
+				<label>Receituário</label>
+				<link>/GerenciarReceituario</link>
+			</item>
 		</submenu>
     </item>
 </menu>
