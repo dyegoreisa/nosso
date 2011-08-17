@@ -17,6 +17,11 @@ class BasicForm
         $this->itens[] = new ItemForm($label, $name, $id, $value, $class, NULL, 'input');
     }
     
+    public function addPassword($label, $name, $id, $class)
+    {
+        $this->itens[] = new ItemForm($label, $name, $id, NULL, $class, NULL, 'password');
+    }
+    
     public function addRadio($label, $name, $id)
     {
         $item = new ItemForm($label, $name, $id, '', '', NULL, 'radio');
@@ -53,6 +58,11 @@ class BasicForm
     public function addImagemFile($label, $name, $id, $class, $imagem)
     {
         $this->itens[] = new ItemForm($label, $name, $id, $imagem, $class, NULL, 'imageFile', '200');
+    }
+    
+    public function addTextArea($label, $name, $id, $class, $value)
+    {
+        $this->itens[] = new ItemForm($label, $name, $id, $value, $class, NULL, 'textArea');        
     }
 
     public function getItens()

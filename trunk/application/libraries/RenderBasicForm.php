@@ -57,6 +57,9 @@ class RenderBasicForm
     {
         $valor = set_value($item->getName());
         $valor = empty($valor) ? $item->getValue() : $valor;
+        if ($item->getClass() == 'data' && !empty($valor)) {
+            $valor = preg_replace('/^([12][0-9]{3})-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])$/', '\3/\2/\1', $valor);
+        }
         echo form_label($item->getLabel(), $item->getId());
         echo '<br/>';
         echo form_input(array(
@@ -68,6 +71,18 @@ class RenderBasicForm
         echo '<br/>';
     }
 
+    public function printPassword(ItemForm $item)
+    {
+        echo form_label($item->getLabel(), $item->getId());
+        echo '<br/>';
+        echo form_password(array(
+            'name'    => $item->getName(),
+            'id'      => $item->getId(),
+            'class'   => $item->getClass()
+        ));
+        echo '<br/>';
+    }
+    
     public function printRadio(ItemForm $item)
     {
         echo form_fieldset($item->getLabel());
@@ -157,6 +172,21 @@ class RenderBasicForm
         echo form_upload(array(
             'name'    => $item->getName(),
             'id'      => $item->getId(),
+            'class'   => $item->getClass()
+        ));
+        echo '<br/>';
+    }
+    
+    public function printTextArea(ItemForm $item)
+    {
+        $valor = set_value($item->getName());
+        $valor = empty($valor) ? $item->getValue() : $valor;
+        echo form_label($item->getLabel(), $item->getId());
+        echo '<br/>';
+        echo form_textarea(array(
+            'name'    => $item->getName(),
+            'id'      => $item->getId(),
+            'value'   => $valor,
             'class'   => $item->getClass()
         ));
         echo '<br/>';
