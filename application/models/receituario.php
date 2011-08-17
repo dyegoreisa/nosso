@@ -19,6 +19,7 @@ class Receituario extends CI_Model
             , r.data_melhora
             , DATE_FORMAT(r.data_melhora,'%d/%m/%Y') as data_melhoraBR
             , r.funcionou
+            , if (r.funcionou = 1, 'Sim', 'Não') as funcionouBR
         ";
     }
 
