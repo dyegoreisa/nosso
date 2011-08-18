@@ -55,7 +55,7 @@ class GerenciarReceituario extends CI_Controller
         $this->basicform->addTextArea('Sintomas: ', 'sintomas', 'sintomas', '', isset($receituario) ? $receituario->sintomas: NULL);
         $this->basicform->addInput('Data dos Sintomas: ', 'data_sintoma', 'data_sintoma', 'data', isset($receituario) ? $receituario->data_sintoma : NULL);
         $this->basicform->addTextArea('Medicação: ', 'medicacao', 'medicacao', '', isset($receituario) ? $receituario->medicacao : NULL);
-        $this->basicform->addInput('Data dos melhora: ', 'data_melhora', 'data_melhora', 'data', isset($receituario) ? $receituario->data_melhora : NULL);
+        $this->basicform->addInput('Data da melhora: ', 'data_melhora', 'data_melhora', 'data', isset($receituario) ? $receituario->data_melhora : NULL);
         $this->basicform->addCheckbox('Funcionou? ', 'funcionou', 'funcionou', '1', isset($pressaoArterial) ? $pressaoArterial->funcionou : NULL);
 
 

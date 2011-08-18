@@ -76,9 +76,9 @@ class Receituario extends CI_Model
 
     public function buscar($dado)
     {
-        $this->db->select($this->columns)->from('receituario')->or_like(array(
-            'sintomas'    => $dado,
-            'receituario' => $dado
+        $this->db->select($this->columns, FALSE)->from('receituario r')->or_like(array(
+            'sintomas'  => $dado,
+            'medicacao' => $dado
         ));
         $query = $this->db->get();
         return $query->result();
