@@ -37,14 +37,16 @@ class GerenciarMedida extends CI_Controller
         $this->load->helper('file');
         $this->load->library('BasicForm');
 
-        $mostrarImagem = $medida = NULL;
+        $mostrarImagemFrente = $mostrarImagemLado = $medida = NULL;
         if(isset($id) && !empty($id)) {
             $this->load->model('Medida');
             $this->load->model('Imagem');
 
             $medida        = $this->Medida->getById($id);
-            $imagem        = $this->Imagem->getById($medida->imagem_id);
-            $mostrarImagem = (isset($imagem)) ? "/GerenciarImagem/mostrar/{$imagem->id}" : NULL;
+            $imagemFrente  = $this->Imagem->getById($medida->imagem_frente_id);
+            $imagemLado    = $this->Imagem->getById($medida->imagem_lado_id);
+            $mostrarImagemFrente = (isset($imagemFrente)) ? "/GerenciarImagem/mostrar/{$imagemFrente->id}" : NULL;
+            $mostrarImagemLado   = (isset($imagemLado)) ? "/GerenciarImagem/mostrar/{$imagemLado->id}" : NULL;
 
             $titulo = 'Alterar Medida';
         } else {
@@ -58,7 +60,8 @@ class GerenciarMedida extends CI_Controller
         $this->basicform->addInput('Data: ', 'data', 'data', 'data', isset($medida) ? $medida->data: date('d/m/Y'));
         $this->basicform->addInput('Altura: ', 'altura', 'altura', '', isset($medida) ? $medida->altura : NULL);
         $this->basicform->addInput('Peso: ', 'peso', 'peso', '', isset($medida) ? $medida->peso : NULL);
-        $this->basicform->addImagemFile('Foto: ', 'foto', 'foto', '', $mostrarImagem);
+        $this->basicform->addImagemFile('Foto de frente: ', 'imagem_frente', 'imagem_frente', '', $mostrarImagemFrente);
+        $this->basicform->addImagemFile('Foto de lado: ', 'imagem_lado', 'imagem_lado', '', $mostrarImagemLado);
 
         $this->load->view('principal', array(
             'template' => 'form',
@@ -88,14 +91,21 @@ class GerenciarMedida extends CI_Controller
             $this->load->model('Imagem');
 
             if (isset($_POST['id'])) {
-                if ($_FILES['foto']['size'] != 0) {
-                    $imagemId = $this->Medida->getImagemIdById($_POST['id']);
-                    $_POST['imagem_id'] = $this->Imagem->alterar($_FILES['foto'], $imagemId);
+                if ($_FILES['imagem_frente']['size'] != 0) {
+                    $imagemFrenteId = $this->Medida->getImagemFrenteIdById($_POST['id']);
+                    $_POST['imagem_frente_id'] = $this->Imagem->alterar($_FILES['imagem_frente'], $imagemFrenteId);
+                }
+                if ($_FILES['imagem_lado']['size'] != 0) {
+                    $imagemLadoId = $this->Medida->getImagemLadoIdById($_POST['id']);
+                    $_POST['imagem_Lado_id'] = $this->Imagem->alterar($_FILES['imagem_lado'], $imagemLadoId);
                 }
                 $id = $this->Medida->atualizar($_POST);
             } else {
-                if ($_FILES['foto']['size'] != 0) {
-                    $_POST['imagem_id'] = $this->Imagem->alterar($_FILES['foto']);
+                if ($_FILES['imagem_frente']['size'] != 0) {
+                    $_POST['imagem_frente_id'] = $this->Imagem->alterar($_FILES['imagem_frente']);
+                }
+                if ($_FILES['imagem_lado']['size'] != 0) {
+                    $_POST['imagem_Lado_id'] = $this->Imagem->alterar($_FILES['imagem_lado']);
                 }
                 $id = $this->Medida->inserir($_POST);
             }
