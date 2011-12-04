@@ -131,6 +131,7 @@ class GerenciarPessoa extends CI_Controller
         $this->load->model('Pessoa');
         $this->load->library('Titulos');
 
+        $this->titulos->addItem('');
         $this->titulos->addItem('Nome', '/GerenciarPessoa/listar', 'nome', 'ASC', 'none');
         $this->titulos->addItem('Sobrenome', '/GerenciarPessoa/listar', 'sobrenome', 'ASC', 'none');
         $this->titulos->addItem('Sexo', '/GerenciarPessoa/listar', 'sexo', 'ASC', 'none');
@@ -145,7 +146,7 @@ class GerenciarPessoa extends CI_Controller
         } else {
             $pessoas = $this->pessoas;
         }
-
+        
         $this->load->view('principal', array(
             'template' => 'GerenciarPessoa/listar',
             'titulo'   => 'Lista pessoas',

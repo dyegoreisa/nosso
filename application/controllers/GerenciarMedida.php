@@ -141,6 +141,7 @@ class GerenciarMedida extends CI_Controller
         $this->load->view('principal', array(
             'template' => 'GerenciarMedida/listar',
             'titulo'   => 'Lista de medidas encontradas',
+            'js'       => TRUE,
             'dados'    => array(
                 'metas'   => $metas,
                 'medidas' => $medidas
@@ -184,12 +185,15 @@ class GerenciarMedida extends CI_Controller
     {
         $this->load->model('Medida');
         $this->load->model('Imagem');
+        $this->load->model('Pessoa');
 
-        $pessoa   = $this->Pessoa->getById($id);
-        $imagemId = $pessoa->imagem_id;
+        $medida   = $this->Medida->getById($id);
+        $imagemFrenteId = $medida->imagem_frente_id;
+        $imagemLadoId   = $medida->imagem_lado_id;
 
         $this->Medida->excluir($id);
-        $this->Imagem->excluir($imagemId);
+        $this->Imagem->excluir($imagemFrenteId);
+        $this->Imagem->excluir($imagemLadoId);
 
         $this->buscar();
     }
@@ -441,6 +445,52 @@ class GerenciarMedida extends CI_Controller
         $metas[count($pesos)] = $metaFim;
         
         return array('pesos' => $metas, 'ultimo_dia' => $meta->dataBR);
+    }
+    
+    /**
+     * Compara duas medidas calculando a perda ou o ganho de peso
+     * Mostra a todo de antes e depois
+     * Calcula também quantos dias de diferença entre
+     * a primeira medida e a segunda
+     */
+    public function comparar()
+    {
+        $titulo = 'Comparando as medidas';
+        
+        if (isset($_POST['comparar']) && is_array($_POST['comparar'])) {
+            $idPrimeiraMedida = $_POST['comparar'][0];
+            $idSegundaMedida  = $_POST['comparar'][1];
+            
+            $this->load->model('Medida');
+            
+            $primeiraMedida = $this->Medida->getById($idPrimeiraMedida);
+            $segundaMedida  = $this->Medida->getById($idSegundaMedida);
+            
+            $diferenca = $primeiraMedida->peso - $segundaMedida->peso;
+            
+            if ($diferenca < 0) {
+                $msg = 'Engordou ' . number_format($diferenca * -1, 3) . ' Kg';
+            } else {
+                $msg = 'Emagreceu ' . number_format($diferenca, 3) . ' Kg';
+            }
+
+            $this->load->view('principal', array(
+                'template' => 'GerenciarMedida/comparar',
+                'titulo'   => $titulo,
+                'dados'    => array(
+                    'primeira'  => $primeiraMedida,
+                    'segunda'   => $segundaMedida,
+                    'diferenca' => $diferenca,
+                    'msg'       => $msg
+                )
+            ));            
+        } else {
+            $this->load->view('principal', array(
+                'template' => 'erro',
+                'titulo'   => $titulo,
+                'mensagem' => 'Não foram selecionado os dados para comparação!'
+            ));
+        }
     }
 }
 ?>

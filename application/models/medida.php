@@ -11,6 +11,9 @@ class Medida extends CI_Model
         $this->regexData = '/^(0[1-9]|[12][0-9]|3[01])\/(0[1-9]|1[012])\/([12][0-9]{3})$/';
         $this->columns = "
             m.id
+            , m.pessoa_id
+            , m.imagem_frente_id            
+            , m.imagem_lado_id
             , m.data
             , DATE_FORMAT(m.data,'%d/%m/%Y') as dataBR
             , m.peso / (m.altura * m.altura) as imc
@@ -28,7 +31,7 @@ class Medida extends CI_Model
             $this->db->order_by('data');
         }
 
-        $this->db->select($this->columns, FALSE)->from('medida m')->join('pessoa p', 'm.pessoa_id = p.id')->where('p.nome', 'dyego');
+        $this->db->select($this->columns, FALSE)->from('medida m')->join('pessoa p', 'm.pessoa_id = p.id');
         $query = $this->db->get();
 
         return $query->result();
@@ -55,7 +58,13 @@ class Medida extends CI_Model
 
     public function getById($id)
     {
-        $query = $this->db->get_where('medida', array('id' => $id));
+        $this->db->select($this->columns, FALSE)
+                 ->from('medida m')
+                 ->join('pessoa p', 'm.pessoa_id = p.id')
+                 ->where('m.id', $id);
+        
+        $query = $this->db->get();
+        
         $medida = $query->result();
         return $medida[0];
     }

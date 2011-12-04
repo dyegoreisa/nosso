@@ -299,3 +299,29 @@ div.botoes {
 #dialog {
     text-align: left;
 }
+
+.antes {
+    border: thin solid;
+    padding: 5px;
+}
+
+
+.depois {
+    left: 65%;
+    position: absolute;
+    top: 6px;
+}
+
+.diferenca {
+    position: relative;
+}
+
+p.emagreceu {
+    color: #057605;
+    font-size: X-large;
+}
+
+p.engordou {
+    font-size: X-large;
+    color: #900000;
+}
