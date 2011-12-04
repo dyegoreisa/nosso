@@ -36,7 +36,6 @@ $(document).ready(function() {
 
     $('input:submit', '.form').button();
     $('a', '#submenu').button();
-    //$('a', '#menu', 'li', '.botoes').button();
     $('a', '.botoes_principal').button();
 
     $('.botoes #novo').button({

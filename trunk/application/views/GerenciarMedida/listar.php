@@ -13,7 +13,8 @@
     <?php endforeach; ?>
     </table>
 </fieldset>
-    <fieldset>
+<form action="/GerenciarMedida/comparar" method="POST" class="form">
+<fieldset>
     <legend>Medidas</legend>
     <table class="layout-grid">
     <tr><?php $this->titulos->render(); ?></tr>
@@ -23,8 +24,13 @@
             <td><?= $medida->dataBR; ?></td>
             <td align="right"><?= $medida->altura; ?></td>
             <td align="right"><?= $medida->peso; ?></td>
-            <td align="center"><?= $this->acoes->render($medida->id, $medida->nome); ?></td>
+            <td align="center">
+                <?= $this->acoes->render($medida->id, $medida->nome); ?>
+                <input type="checkbox" name="comparar[]" value="<?= $medida->id; ?>"/>
+            </td>
         </tr>
     <?php endforeach; ?>
     </table>
 </fieldset>
+<input type="submit" value="Comparar" class="comparar"/>
+</form>
