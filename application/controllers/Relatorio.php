@@ -88,11 +88,11 @@ class Relatorio extends CI_Controller
 
         // Campos
         $this->makereport->addField('tipo', 'Tipo', 'toc.nome AS tipo', 'tipo');
-        $this->makereport->addField('status', 'Status', 'tsoc.nome AS status', 'status');
         $this->makereport->addField('categoria', 'Categoria', 'coc.nome AS categoria', 'categoria');
-        $this->makereport->addField('vencimento', 'Vencimento', "DATE_FORMAT(oc.vencimento, '%d/%m/%Y') AS vencimento", 'vencimento');
-        $this->makereport->addField('valor', 'Valor', 'soc.valor', NULL);
         $this->makereport->addField('protocolo', 'Protocolo', 'oc.protocolo', NULL);
+        $this->makereport->addField('valor', 'Valor', 'soc.valor', NULL);
+        $this->makereport->addField('vencimento', 'Vencimento', "DATE_FORMAT(oc.vencimento, '%d/%m/%Y') AS vencimento", 'vencimento');
+        $this->makereport->addField('status', 'Status', 'tsoc.nome AS status', 'status');
 
         $contas         = $this->makereport->getContas();
 		$displayFiltros = $this->makereport->getDisplayFiltros();
