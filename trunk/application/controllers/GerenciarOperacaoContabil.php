@@ -168,9 +168,9 @@ class GerenciarOperacaoContabil extends CI_Controller
 
         $this->titulos->addItem('Tipo', '/GerenciarOperacaoContabil/listar', 'tipo', 'ASC', 'none');
         $this->titulos->addItem('Categoria', '/GerenciarOperacaoContabil/listar', 'categoria', 'ASC', 'none');
+        $this->titulos->addItem('Protocolo', '/GerenciarOperacaoContabil/listar', 'protocolo', 'ASC', 'none');
         $this->titulos->addItem('Valor', '/GerenciarOperacaoContabil/listar', 'valor', 'ASC', 'none');
         $this->titulos->addItem('Vencimento', '/GerenciarOperacaoContabil/listar', 'vencimento', 'ASC', 'none');
-        $this->titulos->addItem('Protocolo', '/GerenciarOperacaoContabil/listar', 'protocolo', 'ASC', 'none');
         $this->titulos->addItem('Status', '/GerenciarOperacaoContabil/listar', 'status', 'ASC', 'none');
         $this->titulos->addItem('A&ccedil;&otilde;es');
 
