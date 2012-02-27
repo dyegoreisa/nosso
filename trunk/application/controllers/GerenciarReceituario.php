@@ -103,9 +103,9 @@ class GerenciarReceituario extends CI_Controller
         $this->load->model('Receituario');
         $this->load->library('Titulos');
 
-        $this->titulos->addItem('Sintomas', '/GerenciarReceituario/listar', 'sintomas', 'ASC', 'sintomas');
-        $this->titulos->addItem('Data dos Sintomas', '/GerenciarReceituario/listar', 'data_sintomas', 'ASC', 'data_sintoma');
-        $this->titulos->addItem('Funcionou', '/GerenciarReceituario/listar', 'funcionou', 'ASC', 'funcionou');
+        $this->titulos->addItem('Sintomas', '/GerenciarReceituario/listar', 'sintomas', 'ASC', 'none');
+        $this->titulos->addItem('Data dos Sintomas', '/GerenciarReceituario/listar', 'data_sintoma', 'ASC', 'none');
+        $this->titulos->addItem('Funcionou', '/GerenciarReceituario/listar', 'funcionou', 'ASC', 'none');
         $this->titulos->addItem('A&ccedil;&otilde;es');
 
         if (isset($campo) && isset($ordem)) {
