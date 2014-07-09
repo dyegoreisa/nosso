@@ -1,9 +1,11 @@
 package br.com.biavan.model;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -11,10 +13,12 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "medida")
-public class Medida {
+public class Medida implements Serializable {
+
+	private static final long serialVersionUID = 8988894507632455627L;
 
 	@Id
-	@GeneratedValue
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
 	
 	@ManyToOne

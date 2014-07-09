@@ -2,7 +2,7 @@ package br.com.biavan.util;
 
 public enum Posicao {
 
-	EM_PE("Em pÃ©"), SENTADO("Sentado"), DEITADO("Deitado");
+	EM_PE("Em pé"), SENTADO("Sentado"), DEITADO("Deitado");
 	
 	private String posicao;
 	
