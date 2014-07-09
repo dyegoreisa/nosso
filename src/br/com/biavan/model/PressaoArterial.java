@@ -1,9 +1,11 @@
 package br.com.biavan.model;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -13,10 +15,12 @@ import br.com.biavan.util.Posicao;
 
 @Entity
 @Table(name = "pressao_arterial")
-public class PressaoArterial {
+public class PressaoArterial implements Serializable {
+
+	private static final long serialVersionUID = 3701398886994190976L;
 
 	@Id
-	@GeneratedValue
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
 	
 	@ManyToOne

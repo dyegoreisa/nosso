@@ -1,7 +1,10 @@
 package br.com.biavan.model;
 
+import java.io.Serializable;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
@@ -10,10 +13,12 @@ import br.com.biavan.util.TipoOsseo;
 
 @Entity
 @Table(name = "base_imc")
-public class BaseImc {
+public class BaseImc implements Serializable {
+
+	private static final long serialVersionUID = -8551518250332832919L;
 
 	@Id
-	@GeneratedValue
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
 	
 	private Sexo sexo;
