@@ -30,7 +30,9 @@
 		<mapping class="br.com.biavan.model.Meta" />
 		<mapping class="br.com.biavan.model.Pessoa" />
 		<mapping class="br.com.biavan.model.PressaoArterial" />
-		<mapping class="br.com.biavan.model.Usuario" />		
-		<mapping class="br.com.biavan.model.Perfil" />
+		
+		<mapping class="br.com.biavan.auth.Usuario" />		
+		<mapping class="br.com.biavan.auth.Perfil" />
+		<mapping class="br.com.biavan.auth.PerfilUsuario" />
 	</session-factory>
 </hibernate-configuration>
