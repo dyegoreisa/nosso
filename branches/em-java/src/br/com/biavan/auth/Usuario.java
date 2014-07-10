@@ -1,4 +1,4 @@
-package br.com.biavan.model;
+package br.com.biavan.auth;
 
 import java.io.Serializable;
 
@@ -9,9 +9,14 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
+
+import br.com.biavan.model.Pessoa;
 
 @Entity
-@Table(name = "usuario")
+@Table(name = "usuario",
+	uniqueConstraints = {@UniqueConstraint(columnNames={"login"})}
+)
 public class Usuario implements Serializable {
 
 	private static final long serialVersionUID = 6481708150135661104L;
@@ -23,10 +28,6 @@ public class Usuario implements Serializable {
 	@OneToOne
 	@JoinColumn(name = "pessoa_id")
 	private Pessoa pessoa;
-	
-	@OneToOne
-	@JoinColumn(name = "perfil_id")
-	private Perfil perfil;
 	
 	private String login;
 	

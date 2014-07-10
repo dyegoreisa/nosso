@@ -8,5 +8,5 @@
 	<Realm className="org.apache.catalina.realm.DataSourceRealm"
 		debug="99" dataSourceName="jdbc/jnossoDS" localDataSource="true"
 		userTable="usuario" userNameCol="login" userCredCol="senha"
-		userRoleTable="perfil" roleNameCol="nome" />
+		userRoleTable="perfil_usuario" roleNameCol="codigo" />
 </Context>
