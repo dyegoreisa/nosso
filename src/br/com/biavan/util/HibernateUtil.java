@@ -5,20 +5,8 @@ import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.service.ServiceRegistry;
 import org.hibernate.service.ServiceRegistryBuilder;
-import org.hibernate.tool.hbm2ddl.SchemaExport;
 
 public class HibernateUtil {
-
-	public static void main(String[] args) {
-		System.out.println("Inicio");
-
-		Configuration cfg = new Configuration();
-		cfg.configure();
-		SchemaExport se = new SchemaExport(cfg);
-		se.create(true, true);
-
-		System.out.println("Fim");
-	}
 
 	private static SessionFactory sessionFactory = null;
 	private static ServiceRegistry serviceRegistry;
@@ -49,11 +37,22 @@ public class HibernateUtil {
 		return sessionFactory.openSession();
 	}
 
-	/*
-	 * 
-	 * public static SessionFactory getSessionFactory() { if (sessionFactory ==
-	 * null) { try { sessionFactory = new AnnotationConfiguration().configure()
-	 * .buildSessionFactory(); } catch (Exception e) { e.printStackTrace(); } }
-	 * return sessionFactory; }
-	 */
+	public static Session beginTransaction() {
+		Session hibernateSession = HibernateUtil.getSession();
+		hibernateSession.beginTransaction();
+		return hibernateSession;
+	}
+
+	public static void commitTransaction() {
+		HibernateUtil.getSession().getTransaction().commit();
+	}
+
+	public static void rollbackTransaction() {
+		HibernateUtil.getSession().getTransaction().rollback();
+	}
+
+	public static void closeSession() {
+		HibernateUtil.getSession().close();
+	}
+	
 }

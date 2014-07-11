@@ -1,4 +1,4 @@
-package br.com.biavan.auth;
+package br.com.biavan.model;
 
 import java.io.Serializable;
 
