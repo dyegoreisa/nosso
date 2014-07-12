@@ -12,7 +12,7 @@ public class UsuarioDAOImpl extends GenericDAOImpl<Usuario, Long> implements
 
 	@Override
 	public Usuario buscarPorLogin(String login) {
-		String sql = "SELECT u FROM usuario u WHERE p.login = :login";
+		String sql = "SELECT u FROM Usuario u WHERE u.login = :login";
 		Query query = HibernateUtil.getSession().createQuery(sql)
 				.setParameter("login", login);
 		return buscarUm(query);

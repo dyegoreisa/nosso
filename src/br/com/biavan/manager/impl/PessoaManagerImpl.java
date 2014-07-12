@@ -1,4 +1,4 @@
-package br.com.biavan.manager;
+package br.com.biavan.manager.impl;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -7,21 +7,22 @@ import javax.persistence.NonUniqueResultException;
 
 import org.hibernate.HibernateException;
 
-import br.com.biavan.dao.UsuarioDAO;
-import br.com.biavan.dao.impl.UsuarioDAOImpl;
-import br.com.biavan.model.Usuario;
+import br.com.biavan.dao.PessoaDAO;
+import br.com.biavan.dao.impl.PessoaDAOImpl;
+import br.com.biavan.manager.PessoaManager;
+import br.com.biavan.model.Pessoa;
 import br.com.biavan.util.HibernateUtil;
 
-public class UsuarioManagerImpl implements UsuarioManager {
+public class PessoaManagerImpl implements PessoaManager {
 
-	private UsuarioDAO usuarioDAO = new UsuarioDAOImpl();
-
+	private PessoaDAO pessoaDAO = new PessoaDAOImpl();
+	
 	@Override
-	public Usuario buscarUsuarioPorLogin(String login) {
-		Usuario usuario = null;
+	public Pessoa buscarPessoaPorNome(String nome, String sobrenome) {
+		Pessoa pessoa = null;
 		try {
 			HibernateUtil.beginTransaction();
-			usuario = usuarioDAO.buscarPorLogin(login);
+			pessoa = pessoaDAO.buscarPorNome(nome, sobrenome);
 			HibernateUtil.commitTransaction();
 		} catch (NonUniqueResultException ex) {
 			System.out.println("Handle your error here");
@@ -29,15 +30,15 @@ public class UsuarioManagerImpl implements UsuarioManager {
 		} catch (HibernateException ex) {
 			System.out.println("Handle your error here");
 		}
-		return usuario;
+		return pessoa;
 	}
 
 	@Override
-	public List<Usuario> carregarTodosUsuarios() {
-		List<Usuario> allPersons = new ArrayList<Usuario>();
+	public List<Pessoa> carregarTodosPessoas() {
+		List<Pessoa> allPersons = new ArrayList<Pessoa>();
 		try {
 			HibernateUtil.beginTransaction();
-			allPersons = usuarioDAO.listar(Usuario.class);
+			allPersons = pessoaDAO.listar(Pessoa.class);
 			HibernateUtil.commitTransaction();
 		} catch (HibernateException ex) {
 			System.out.println("Handle your error here");
@@ -46,10 +47,10 @@ public class UsuarioManagerImpl implements UsuarioManager {
 	}
 
 	@Override
-	public void salvarNovoUsuario(Usuario usuario) {
+	public void salvarNovoPessoa(Pessoa pessoa) {
 		try {
 			HibernateUtil.beginTransaction();
-			usuarioDAO.salvar(usuario);
+			pessoaDAO.salvar(pessoa);
 			HibernateUtil.commitTransaction();
 		} catch (HibernateException ex) {
 			System.out.println("Handle your error here");
@@ -59,23 +60,23 @@ public class UsuarioManagerImpl implements UsuarioManager {
 	}
 
 	@Override
-	public Usuario buscarUsuarioPorId(long id) {
-		Usuario usuario = null;
+	public Pessoa buscarPessoaPorId(long id) {
+		Pessoa pessoa = null;
 		try {
 			HibernateUtil.beginTransaction();
-			usuario = (Usuario) usuarioDAO.buscarPorId(Usuario.class, id);
+			pessoa = (Pessoa) pessoaDAO.buscarPorId(Pessoa.class, id);
 			HibernateUtil.commitTransaction();
 		} catch (HibernateException ex) {
 			System.out.println("Handle your error here");
 		}
-		return usuario;
+		return pessoa;
 	}
 
 	@Override
-	public void removerUsuario(Usuario usuario) {
+	public void removerPessoa(Pessoa pessoa) {
 		try {
             HibernateUtil.beginTransaction();
-            usuarioDAO.remover(usuario);
+            pessoaDAO.remover(pessoa);
             HibernateUtil.commitTransaction();
         } catch (HibernateException ex) {
             System.out.println("Handle your error here");
