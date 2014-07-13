@@ -10,7 +10,7 @@ public interface PessoaManager {
 	 
     public List<Pessoa> carregarTodosPessoas();
  
-    public void salvarNovoPessoa(Pessoa pessoa);
+    public void salvarNovaPessoa(Pessoa pessoa);
  
     public Pessoa buscarPessoaPorId(long id);
  

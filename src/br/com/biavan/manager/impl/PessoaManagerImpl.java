@@ -35,19 +35,19 @@ public class PessoaManagerImpl implements PessoaManager {
 
 	@Override
 	public List<Pessoa> carregarTodosPessoas() {
-		List<Pessoa> allPersons = new ArrayList<Pessoa>();
+		List<Pessoa> pessoas = new ArrayList<Pessoa>();
 		try {
 			HibernateUtil.beginTransaction();
-			allPersons = pessoaDAO.listar(Pessoa.class);
+			pessoas = pessoaDAO.listar(Pessoa.class);
 			HibernateUtil.commitTransaction();
 		} catch (HibernateException ex) {
 			System.out.println("Handle your error here");
 		}
-		return allPersons;
+		return pessoas;
 	}
 
 	@Override
-	public void salvarNovoPessoa(Pessoa pessoa) {
+	public void salvarNovaPessoa(Pessoa pessoa) {
 		try {
 			HibernateUtil.beginTransaction();
 			pessoaDAO.salvar(pessoa);

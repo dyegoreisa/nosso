@@ -4,13 +4,13 @@
 "http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
 <hibernate-configuration>
 	<session-factory>
-		<property name="hibernate.connection.driver_class">org.postgresql.Driver</property>
-
-		<property name="hibernate.connection.url">jdbc:postgresql://localhost:5432/jnosso</property>
-		<property name="hibernate.connection.username">usr_banco</property>
-		<property name="hibernate.connection.password">banco123</property>
-
-		<property name="hibernate.dialect">org.hibernate.dialect.PostgreSQLDialect</property>
+		<property name="hibernate.connection.driver_class">com.mysql.jdbc.Driver</property>
+		 
+        <property name="hibernate.connection.url">jdbc:mysql://localhost:3306/jnosso</property>
+        <property name="hibernate.connection.username">root</property>
+        <property name="hibernate.connection.password">banco123</property>
+        
+        <property name="hibernate.dialect">org.hibernate.dialect.MySQLDialect</property>
 		<property name="hibernate.show_sql">true</property>
 		<property name="hibernate.format_sql">true</property>
 		<property name="hibernate.jdbc.batch_size">20</property>
@@ -23,7 +23,7 @@
 		<property name="c3p0.timeout">100</property>
 		
 		<!-- validate | update | create | create-drop -->
-		<property name="hibernate.hbm2ddl.auto">validate</property>
+		<property name="hibernate.hbm2ddl.auto">update</property>
 		
 		<mapping class="br.com.biavan.model.BaseImc" />
 		<mapping class="br.com.biavan.model.Medida" />
@@ -31,8 +31,8 @@
 		<mapping class="br.com.biavan.model.Pessoa" />
 		<mapping class="br.com.biavan.model.PressaoArterial" />
 		
-		<mapping class="br.com.biavan.auth.Usuario" />		
-		<mapping class="br.com.biavan.auth.Perfil" />
-		<mapping class="br.com.biavan.auth.PerfilUsuario" />
+		<mapping class="br.com.biavan.model.Usuario" />		
+		<mapping class="br.com.biavan.model.Perfil" />
+		<mapping class="br.com.biavan.model.PerfilUsuario" />
 	</session-factory>
 </hibernate-configuration>
