@@ -19,7 +19,7 @@ body {
 	<h:form id="frmLogin">
 		<p:panel header="Identificação"
 			style="width:470px;margin:10% 25% 10% 25%;">
-			<p:panelGrid columns="3">
+			<h:panelGrid columns="3">
 
 				<h:outputLabel for="login" value="Login:" />
 				<h:inputText id="login" value="#{loginMB.usuario.login}"
@@ -37,7 +37,7 @@ body {
 				<h:commandButton action="#{loginMB.logar}" update="messages"
 					value="Entrar" />
 
-			</p:panelGrid>
+			</h:panelGrid>
 		</p:panel>
 
 	</h:form>
