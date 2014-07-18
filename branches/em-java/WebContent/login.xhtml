@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+<h:head>
+	<title>Nosso</title>
+	<style type="text/css">
+body {
+	font-size: 10px;
+}
+</style>
+</h:head>
+<h:body>
+	<p:growl id="messages" showDetail="true" autoUpdate="true"
+		closable="true" />
+
+	<h:form id="frmLogin">
+		<p:panel header="Identificação"
+			style="width:470px;margin:10% 25% 10% 25%;">
+			<p:panelGrid columns="3">
+
+				<h:outputLabel for="login" value="Login:" />
+				<h:inputText id="login" value="#{loginMB.usuario.login}"
+					required="true" requiredMessage="Campo de login é obrigatório"
+					label="Login" />
+				<h:message for="login" />
+
+
+				<h:outputLabel for="senha" value="Senha:" />
+				<h:inputSecret id="senha" value="#{loginMB.usuario.senha}"
+					required="true" requiredMessage="Campo de senha é obrigatório"
+					label="Senha" />
+				<h:message for="senha" />
+
+				<h:commandButton action="#{loginMB.logar}" update="messages"
+					value="Entrar" />
+
+			</p:panelGrid>
+		</p:panel>
+
+	</h:form>
+</h:body>
+</html>
