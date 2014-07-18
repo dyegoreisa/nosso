@@ -10,7 +10,10 @@ public class HibernateUtil {
 
 	private static SessionFactory sessionFactory = null;
 	private static ServiceRegistry serviceRegistry;
+	private static Session session;
 
+	private HibernateUtil() {}
+	
 	static {
 		try {
 			sessionFactory = getSessionFactory();
@@ -34,25 +37,27 @@ public class HibernateUtil {
 	}
 
 	public static Session getSession() {
-		return sessionFactory.openSession();
+		if (session == null) {
+			session = sessionFactory.openSession();
+		}
+		return session;
 	}
 
 	public static Session beginTransaction() {
-		Session hibernateSession = HibernateUtil.getSession();
-		hibernateSession.beginTransaction();
-		return hibernateSession;
+		getSession().beginTransaction();
+		return session;
 	}
 
 	public static void commitTransaction() {
-		HibernateUtil.getSession().getTransaction().commit();
+		getSession().getTransaction().commit();
 	}
 
 	public static void rollbackTransaction() {
-		HibernateUtil.getSession().getTransaction().rollback();
+		getSession().getTransaction().rollback();
 	}
 
 	public static void closeSession() {
-		HibernateUtil.getSession().close();
+		getSession().close();
 	}
 	
 }
