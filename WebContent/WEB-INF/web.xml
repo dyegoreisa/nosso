@@ -3,10 +3,23 @@
 	xmlns="http://java.sun.com/xml/ns/javaee"
 	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
 	id="WebApp_ID" version="3.0">
-  <display-name>jNosso</display-name>
+	<display-name>jNosso</display-name>
 	<welcome-file-list>
-		<welcome-file>index.jsp</welcome-file>
+		<welcome-file>login.jsf</welcome-file>
 	</welcome-file-list>
+	<error-page>
+		<error-code>404</error-code>
+		<location>/erro404.jsf</location>
+	</error-page>
+	<error-page>
+		<error-code>500</error-code>
+		<location>/erro500.jsf</location>
+	</error-page>
+	<context-param>
+		<param-name>primefaces.THEME</param-name>
+		<param-value>overcast</param-value>
+	</context-param>
+	
 	<resource-ref>
 		<description>Web Database</description>
 		<res-ref-name>jdbc/jnossoDS</res-ref-name>
@@ -18,7 +31,7 @@
 		<display-name>Área Restrita</display-name>
 		<web-resource-collection>
 			<web-resource-name>Arquivos protegidos por login</web-resource-name>
-			<url-pattern>/jsp/*</url-pattern>
+			<url-pattern>/xhtml/*</url-pattern>
 		</web-resource-collection>
 		<auth-constraint>
 			<role-name>ADM</role-name>
@@ -28,8 +41,8 @@
 		<auth-method>FORM</auth-method>
 		<realm-name>StripesSecRealm</realm-name>
 		<form-login-config>
-			<form-login-page>/login.jsp</form-login-page>
-			<form-error-page>/erro.jsp</form-error-page>
+			<form-login-page>/login.jsf</form-login-page>
+			<form-error-page>/falha_login.jsf</form-error-page>
 		</form-login-config>
 	</login-config>
 	<security-role>

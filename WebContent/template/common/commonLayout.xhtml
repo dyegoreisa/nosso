@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+
+<h:head>
+	<h:outputStylesheet library="css" name="default.css" />
+	<h:outputStylesheet library="css" name="syntaxhighlighter.css" />
+	<style type="text/css">
+
+/* Sticky footer styles
+  -------------------------------------------------- */
+html,body {
+	height: 100%;
+	/* The html and body elements cannot have any padding or margin. */
+}
+
+/* Wrapper for page content to push down footer */
+#contentwrap {
+	min-height: 100%;
+	height: auto !important;
+	height: 100%;
+	/* Negative indent footer by it's height */
+	margin: 0 auto -60px;
+}
+
+/* Set the fixed height of the footer here */
+#push,#footer {
+	height: 60px;
+}
+
+#footerwrap {
+	background-color: #f5f5f5;
+	margin-top: 65px;
+	padding-left: 20px;
+	padding-right: 20px;
+	text-align: center;
+	height: 50px;
+}
+
+#imglogo {
+	left: 30%;
+	position: relative;
+	width: 540px;
+}
+
+/* Custom page CSS
+  -------------------------------------------------- */
+/* Not required for template or sticky footer method. */
+.container {
+	width: auto;
+}
+
+.container .credit {
+	margin: 20px 0;
+}
+</style>
+</h:head>
+
+<h:body>
+
+	<div id="page">
+
+		<div id="header">
+			<ui:insert name="header">
+				<ui:include src="/template/common/commonHeader.xhtml" />
+			</ui:insert>
+		</div>
+
+		<div id="contentwrap">
+			<ui:insert name="content">
+				<ui:include src="/template/common/commonContent.xhtml" />
+			</ui:insert>
+		</div>
+
+		<div id="footerwrap">
+			<ui:insert name="footer">
+				<ui:include src="/template/common/commonFooter.xhtml" />
+			</ui:insert>
+		</div>
+
+	</div>
+
+</h:body>
+</html>
